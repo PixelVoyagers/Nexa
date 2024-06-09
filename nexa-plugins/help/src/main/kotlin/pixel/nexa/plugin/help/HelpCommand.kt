@@ -16,7 +16,7 @@ class HelpCommand(private val commandContainer: CommandContainer, private val as
 
     @Action
     suspend fun handle(@Option("command", required = false, autoComplete = Option.AutoCompleteMode.ENABLED) commandName: String? = null, @Argument session: CommandSession): Any {
-        val locale: AbstractLanguage = session.getLanguage()
+        val locale: AbstractLanguage = session.getUser().getLanguageOrNull() ?: session.getLanguage()
         return if (commandName != null)
             handleCommandHelp(commandContainer.getAll().first { it.getCommandData().getIdentifier() == identifierOf(commandName, "nexa") }, session, locale)
         else {

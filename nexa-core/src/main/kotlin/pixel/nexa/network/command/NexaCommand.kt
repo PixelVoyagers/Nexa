@@ -120,9 +120,10 @@ class CommandData(private val command: NexaCommand) {
 
     fun getOptions() = options
 
-    private val autoComplete: MutableMap<Array<out String>, KFunction<*>> = getNexaCommand()::class.memberFunctions.filter {
-        it.hasAnnotation<NexaCommand.AutoComplete>()
-    }.associateBy { it.findAnnotation<NexaCommand.AutoComplete>()!!.option }.toMutableMap()
+    private val autoComplete: MutableMap<Array<out String>, KFunction<*>> =
+        getNexaCommand()::class.memberFunctions.filter {
+            it.hasAnnotation<NexaCommand.AutoComplete>()
+        }.associateBy { it.findAnnotation<NexaCommand.AutoComplete>()!!.option }.toMutableMap()
 
     fun getAutoComplete() = autoComplete
 

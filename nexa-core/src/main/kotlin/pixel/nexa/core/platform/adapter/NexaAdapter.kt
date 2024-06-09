@@ -15,4 +15,7 @@ interface NexaAdapter<T : NexaBot<T>, C : AbstractNexaAdapter.Companion.Config> 
     fun getConfig(): C
     fun isEnabled(): Boolean
 
+
+    fun getBotInternalName(bot: NexaBot<*>) = "${getPlatform()}:${bot.getName()}"
+
 }

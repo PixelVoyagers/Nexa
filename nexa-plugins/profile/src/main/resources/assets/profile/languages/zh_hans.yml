@@ -9,3 +9,10 @@ command.profile:
   luck:
     name: 幸运值
     description: 查询今日幸运值
+  locale:
+    name: 语言
+    description: 切换或查询本地化语言
+    option.language.name: 语言
+    reply:
+      success: "成功切换到语言: %s!"
+      not-found: "语言未找到: %s!"

@@ -30,9 +30,9 @@
         </div>
         <section th:each="command : ${commands}">
             <div class="flex justify-between items-center">
-                <div class="text-xs font-bold text-gray-900" th:text="${command.getCommandTranslator().getCommandFullName().asText(language)}"></div>
-                <div class="text-xs font-bold text-gray-800" th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
-                <div class="text-xs text-gray-700" th:text="${command.getCommandData().getIdentifier().toString()}"></div>
+                <div class="text-xs font-bold text-gray-900 px-2" th:text="${command.getCommandTranslator().getCommandFullName().asText(language)}"></div>
+                <div class="text-xs font-bold text-gray-800 px-2" th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
+                <div class="text-xs text-gray-70 px-2" th:text="${command.getCommandData().getIdentifier().toString()}"></div>
             </div>
             <div class="flex justify-between items-center" style="height: 0.5rem;"></div>
         </section>

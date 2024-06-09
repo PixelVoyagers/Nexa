@@ -7,7 +7,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.utils.FileUpload
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
+import pixel.auxframework.component.factory.getComponent
 import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.Languages
 import pixel.nexa.network.message.*
 import pixel.nexa.network.session.CommandSession
 import pixel.nexa.plugin.adapter.discord.DiscordBot
@@ -17,12 +19,22 @@ import pixel.nexa.plugin.adapter.discord.entity.DiscordUser
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-
 class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val bot: DiscordBot) : CommandSession() {
 
-    override fun getLanguage() = slash.userLocale.toNexa(bot.getAdapter().getContext())
+    fun DiscordUser.verify() = this.apply {
+        val dataHolder = this.getDataStorage()
+        val data = dataHolder.get()
+        if (data.locale == null) {
+            val languages = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>()
+            val languageName = languages.getName(slash.userLocale.toNexa(bot.getAdapter().getContext())) ?: languages.getName(languages.getDefault())
+            data.locale = languageName
+        }
+        dataHolder.set(data)
+    }
 
-    override fun getUser() = getBot().cachePool.getOrPut(slash.user.id) { DiscordUser(getBot(), slash.user) }
+    override fun getLanguage() = getUser().getLanguageOrNull() ?: slash.userLocale.toNexa(bot.getAdapter().getContext())
+
+    override fun getUser() = getBot().cachePool.getOrPut(slash.user.id) { DiscordUser(getBot(), slash.user).verify() }
     override fun getChannelId() = slash.channelId
     override fun getGuild() = slash.guild?.let { DiscordGuild(getBot(), it) }
     override fun getBot() = bot

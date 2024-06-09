@@ -1,9 +1,34 @@
 package pixel.nexa.network.entity.user
 
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import pixel.auxframework.component.factory.getComponent
+import pixel.auxframework.util.FunctionUtils.memorize
+import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.adapter.NexaBot
+import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.Languages
+import pixel.nexa.core.util.FileStorage
+import pixel.nexa.core.util.IStorage
 import java.io.InputStream
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+
+open class UserMeta {
+
+    var locale: String? = null
+
+}
 
 abstract class User(private val bot: NexaBot<*>) {
+
+    open fun getDataStorage(): IStorage<UserMeta> = memorize(this) {
+        FileStorage(
+            jacksonTypeRef<UserMeta>(),
+            default = { UserMeta() },
+            path = "user/${getUserInternalName()}.yml",
+            getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<NexaCore>()
+        )
+    }
 
     /**
      * 获取机器人实例
@@ -55,4 +80,20 @@ abstract class User(private val bot: NexaBot<*>) {
      */
     abstract fun getDefaultAvatarURL(): String?
 
+    open fun getLanguageOrNull() = getDataStorage().get().locale?.let {
+        getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getLanguageOrNull(it)
+    }
+
+    fun getLanguage() = getLanguageOrNull()!!
+
+    open fun setLanguage(language: AbstractLanguage) = apply {
+        val dataHolder = getDataStorage()
+        val data = dataHolder.get()
+        data.locale = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getName(language)
+        dataHolder.set(data)
+    }
+
 }
+
+@OptIn(ExperimentalEncodingApi::class)
+fun User.getUserInternalName() = Base64.UrlSafe.encode("${getBot().getAdapter().getBotInternalName(getBot())}:${getUserId()}".toByteArray())

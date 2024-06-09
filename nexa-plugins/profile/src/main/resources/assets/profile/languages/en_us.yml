@@ -9,3 +9,9 @@ command.profile:
   luck:
     name: luck
     description: A command to query today's luck value
+  locale:
+    name: locale
+    description: A command to query the current language or change the localized language
+    reply:
+      success: "Successfully switched to language: %s!"
+      not-found: "Language not found: %s!"

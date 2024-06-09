@@ -47,7 +47,7 @@ class IdCardCommand(private val assetsMap: AssetsMap) : NexaCommand() {
                 MessageFragments.pageView(
                     assetsMap.getPage(identifierOf("profile:profile.html"))
                 ) {
-                    put("language", session.getLanguage())
+                    put("language", user.getLanguageOrNull() ?: session.getUser().getLanguageOrNull() ?: session.getLanguage())
                     put("userName", user.getEffectiveName())
                     put("userId", userId)
                     put("userPlatform", user.getBot().getAdapter().getPlatform())
