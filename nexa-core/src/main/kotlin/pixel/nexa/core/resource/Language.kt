@@ -7,7 +7,7 @@ import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.util.ConfigUtils
 import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
-import pixel.nexa.core.component.AfterNexaContextStarted
+import pixel.nexa.core.component.AfterResourceLoaded
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.util.ResourceUtils
 import pixel.nexa.network.message.IDocumentSupport
@@ -88,16 +88,18 @@ object RootLanguage : AbstractLanguage() {
 }
 
 @Component
-class LanguageResourcesProcessor : AfterNexaContextStarted {
+class LanguageResourcesProcessor : AfterResourceLoaded {
 
     @Autowired
     private lateinit var assetsMap: AssetsMap
+
     @Autowired
     private lateinit var context: NexaContext
+
     @Autowired
     private lateinit var languages: Languages
 
-    override fun afterNexaContextStarted(context: NexaContext) {
+    override fun afterResourceLoaded(resourceMap: ResourceMap) {
         for (resource in assetsMap.values()) {
             if (resource.getResourceType().getPath() == "languages") {
                 val languageName = resource.getFileName(false)

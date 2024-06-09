@@ -1,2 +1,8 @@
 text.profile:
   id-card: 身份卡
+
+command.profile:
+  id-card:
+    name: 身份卡
+    option.user:
+      name: 用户

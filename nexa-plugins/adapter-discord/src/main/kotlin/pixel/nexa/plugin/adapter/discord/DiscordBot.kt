@@ -108,8 +108,7 @@ class DiscordBot(private val discordAdapter: DiscordAdapter, private val config:
                 )
             }
             command.getCommandData().getNexaCommand().also {
-                val translation = it.commandTranslator
-                translation.putDiscordTranslations(commandData, getAdapter().getContext())
+                it.commandTranslator.putDiscordTranslations(commandData, getAdapter().getContext())
             }
             discordCommands += commandData
         }

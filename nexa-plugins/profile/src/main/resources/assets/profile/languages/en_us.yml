@@ -1,2 +1,8 @@
 text.profile:
   id-card: ID Card
+
+command.profile:
+  id-card:
+    name: id-card
+    option.user:
+      name: user

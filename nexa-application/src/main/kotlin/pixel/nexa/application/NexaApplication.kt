@@ -18,6 +18,7 @@ import pixel.auxframework.plugin.loader.AuxPluginLoader
 import pixel.auxframework.plugin.loader.AuxPluginLoaderConfig
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.NexaVersion
+import pixel.nexa.core.component.AfterResourceLoaded
 import pixel.nexa.core.component.NexaContextAware
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.resource.AssetsMap
@@ -90,15 +91,17 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
         for (plugin in pluginContainer.getAll()) runCatching {
             classLoaders += plugin.getPluginClassLoader()
         }
+        val assetsMap = context.componentFactory().getComponent<AssetsMap>()
         for (classLoader in classLoaders) {
             context.componentFactory().getComponent<ResourceLoader>()
                 .loadAsResourceMap("classpath:/assets", PathMatchingResourcePatternResolver(classLoader))
                 .also { resources ->
-                    context.componentFactory().getComponent<AssetsMap>().apply {
+                    assetsMap.apply {
                         load(resources)
                     }
                 }
         }
+        context.componentFactory().getComponents<AfterResourceLoaded>().forEach { it.afterResourceLoaded(assetsMap) }
         getNexaContext().start()
     }
 
