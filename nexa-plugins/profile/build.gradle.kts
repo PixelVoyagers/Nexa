@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     api(project(":nexa-core"))
+
+    implementation("com.google.zxing:core:3.5.3")
 }
 
 dependencies {

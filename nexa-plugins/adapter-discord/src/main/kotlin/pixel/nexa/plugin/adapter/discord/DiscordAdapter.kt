@@ -9,7 +9,11 @@ import pixel.nexa.core.platform.adapter.AbstractNexaAdapter
 @Service
 class DiscordAdapter : AbstractNexaAdapter<DiscordBot, DiscordAdapter.Config>() {
 
-    class Config : Companion.Config()
+    companion object {
+        const val PLATFORM_NAME = "discord"
+    }
+
+    class Config : AbstractNexaAdapter.Companion.Config()
 
     override fun getBots() = memorize {
         getConfig().bots.map {
@@ -19,6 +23,6 @@ class DiscordAdapter : AbstractNexaAdapter<DiscordBot, DiscordAdapter.Config>() 
         }.toMutableSet()
     }
 
-    override fun getPlatform() = "discord"
+    override fun getPlatform() = PLATFORM_NAME
 
 }

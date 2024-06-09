@@ -1,8 +1,14 @@
 package pixel.nexa.core.platform.adapter
 
+import pixel.nexa.network.entity.user.User
+
 interface NexaBot<S : NexaBot<S>> {
 
-    interface Internal
+    interface Internal {
+
+        suspend fun getUserById(id: String): User
+
+    }
 
     fun getAdapter(): NexaAdapter<S, *>
 

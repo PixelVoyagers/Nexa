@@ -3,8 +3,10 @@ package pixel.nexa.core.resource
 import com.google.common.collect.HashBiMap
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import org.springframework.core.io.support.ResourcePatternResolver
+import pixel.auxframework.component.annotation.Autowired
 import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.Identifier
+import pixel.auxframework.util.FunctionUtils.memorize
 import java.util.*
 
 abstract class AbstractResourceLoader {
@@ -103,6 +105,10 @@ open class ResourceMap : ResourceLocationMap<NexaResource>() {
 @Component
 class AssetsMap : ResourceMap() {
 
-    fun getPage(identifier: Identifier) = this[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")]
+    @Autowired private lateinit var loader: ResourceLoader
+
+    fun getPage(identifier: Identifier) = memorize(identifier) {
+        PageView(this[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")], loader)
+    }
 
 }

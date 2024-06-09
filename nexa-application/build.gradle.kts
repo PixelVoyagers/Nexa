@@ -1,14 +1,15 @@
 plugins {
     kotlin("jvm")
     id("maven-publish")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     application
 }
 
 dependencies {
     api(project(":nexa-core"))
 
-    implementation(project(":nexa-plugins:nexa-plugin-adapter-discord"))
-    implementation(project(":nexa-plugins:nexa-plugin-profile"))
+    api(project(":nexa-plugins:nexa-plugin-adapter-discord"))
+    api(project(":nexa-plugins:nexa-plugin-profile"))
 }
 
 dependencies {

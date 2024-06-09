@@ -4,6 +4,7 @@ import pixel.auxframework.context.AuxContext
 import pixel.auxframework.core.AuxVersion
 import pixel.auxframework.web.AuxWeb
 import pixel.nexa.plugin.adapter.discord.DiscordAdapter
+import pixel.nexa.plugin.profile.IdCardCommand
 
 class NexaEngine
 
@@ -18,7 +19,8 @@ object NexaEngineBootstrap {
                         this += arrayOf(
                             AuxWeb::class.java.classLoader,
                             AuxContext::class.java.classLoader,
-                            AuxVersion::class.java.classLoader
+                            AuxVersion::class.java.classLoader,
+                            IdCardCommand::class.java.classLoader
                         )
                         this += arrayOf(DiscordAdapter::class.java.classLoader)
                     }

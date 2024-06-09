@@ -86,6 +86,7 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
         val pluginContainer = loadPlugins()
         context.componentFactory().getComponents<NexaContextAware>().forEach { it.setNexaContext(getNexaContext()) }
         val classLoaders = mutableSetOf(this::class.java.classLoader)
+        classLoaders += this.context.classLoaders
         for (plugin in pluginContainer.getAll()) runCatching {
             classLoaders += plugin.getPluginClassLoader()
         }
