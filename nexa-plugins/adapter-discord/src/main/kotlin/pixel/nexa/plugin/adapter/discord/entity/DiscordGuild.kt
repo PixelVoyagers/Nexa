@@ -23,5 +23,6 @@ class DiscordGuild(private val bot: DiscordBot, private val guild: net.dv8tion.j
 
     override fun getGuildName() = guild.name
     override fun hashCode() = guild.hashCode()
-    override fun equals(other: Any?) = other === this || (other != null && other is DiscordGuild && other.guild.hashCode() == guild.hashCode())
+    override fun equals(other: Any?) =
+        other === this || (other != null && other is DiscordGuild && other.guild.hashCode() == guild.hashCode())
 }

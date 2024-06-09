@@ -3,7 +3,8 @@ package pixel.nexa.network.message
 /**
  * 可变的消息数据
  */
-open class MutableMessageData(private val list: MutableList<MessageFragment> = mutableListOf()) : MessageData, Iterable<MessageFragment> by list {
+open class MutableMessageData(private val list: MutableList<MessageFragment> = mutableListOf()) : MessageData,
+    Iterable<MessageFragment> by list {
 
     /**
      * 添加片段

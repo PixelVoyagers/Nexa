@@ -36,7 +36,9 @@ class Languages(private val context: NexaContext, core: NexaCore) {
     fun getName(language: AbstractLanguage) = languages.inverse()[language]
     fun getRoot() = languages["root"]!!
     fun getLanguages(): HashBiMap<String, AbstractLanguage> = languages
-    fun getLanguageOrPut(key: String, default: () -> AbstractLanguage): AbstractLanguage = languages.getOrPut(key, default)
+    fun getLanguageOrPut(key: String, default: () -> AbstractLanguage): AbstractLanguage =
+        languages.getOrPut(key, default)
+
     fun getDefault() = languages[config.defaultLanguage] ?: languages["root"]!!
     fun getLanguage(language: String, default: AbstractLanguage = getDefault()) = getLanguageOrNull(language) ?: default
     fun getLanguageOrNull(language: String) = languages[language]
@@ -55,8 +57,9 @@ abstract class AbstractLanguage : MutableMap<String, String> by mutableMapOf() {
                 else -> it
             }
         }.toTypedArray()
-        return getOrDefault(key, "null").let { if (it == "null") fallback() else it } .format(Locale.ROOT, *args)
+        return getOrDefault(key, "null").let { if (it == "null") fallback() else it }.format(Locale.ROOT, *args)
     }
+
     open fun getOrDefault(key: String, defaultValue: String = key) = super.getOrDefault(key, defaultValue)
     open fun getOrNull(key: String) = this[key]
 }
@@ -64,7 +67,7 @@ abstract class AbstractLanguage : MutableMap<String, String> by mutableMapOf() {
 /**
  * 上下文语言
  */
-open class ContextLanguage(private val context: NexaContext) : AbstractLanguage()  {
+open class ContextLanguage(private val context: NexaContext) : AbstractLanguage() {
     override fun getCompletionRate(compare: AbstractLanguage): Double {
         return compare.keys.filter { this.contains(it) }.size.toDouble() / compare.keys.size.toDouble()
     }
@@ -87,9 +90,12 @@ object RootLanguage : AbstractLanguage() {
 @Component
 class LanguageResourcesProcessor : AfterNexaContextStarted {
 
-    @Autowired private lateinit var assetsMap: AssetsMap
-    @Autowired private lateinit var context: NexaContext
-    @Autowired private lateinit var languages: Languages
+    @Autowired
+    private lateinit var assetsMap: AssetsMap
+    @Autowired
+    private lateinit var context: NexaContext
+    @Autowired
+    private lateinit var languages: Languages
 
     override fun afterNexaContextStarted(context: NexaContext) {
         for (resource in assetsMap.values()) {

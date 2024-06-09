@@ -105,7 +105,8 @@ open class ResourceMap : ResourceLocationMap<NexaResource>() {
 @Component
 class AssetsMap : ResourceMap() {
 
-    @Autowired private lateinit var loader: ResourceLoader
+    @Autowired
+    private lateinit var loader: ResourceLoader
 
     fun getPage(identifier: Identifier) = memorize(identifier) {
         PageView(this[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")], loader)

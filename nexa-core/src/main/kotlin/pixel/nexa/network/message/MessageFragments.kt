@@ -43,6 +43,7 @@ object MessageFragments {
             val outputSettings = Document.OutputSettings().prettyPrint(false)
             Jsoup.clean(it, "", Safelist.none(), outputSettings)
         }
+
         override fun asNode(language: AbstractLanguage) = Jsoup.parse(literalString, "", Parser.xmlParser())
     }
 
@@ -60,6 +61,7 @@ object MessageFragments {
         private val byteArray: ByteArray by lazy {
             BrowserUtils.screenshot(pageView.render(block))
         }
+
         override fun inputStream(language: AbstractLanguage): InputStream {
             return ByteArrayInputStream(byteArray)
         }
@@ -103,7 +105,8 @@ object MessageFragments {
     /**
      * 可翻译的
      */
-    fun translatable(key: String, vararg args: Any?, fallback: () -> TextFragment = { literal(key) }) = TranslatableFragment(key, args, fallback)
+    fun translatable(key: String, vararg args: Any?, fallback: () -> TextFragment = { literal(key) }) =
+        TranslatableFragment(key, args, fallback)
 
     /**
      * 多个片段
@@ -112,12 +115,20 @@ object MessageFragments {
 
 }
 
-class TranslatableFragment(val key: String, val args: Array<out Any?>, val fallback: () -> TextFragment) : TextFragment {
+class TranslatableFragment(val key: String, val args: Array<out Any?>, val fallback: () -> TextFragment) :
+    TextFragment {
 
-    override fun asText(language: AbstractLanguage) = language.format(key, *args, fallback = { fallback().asText(language) })
+    override fun asText(language: AbstractLanguage) =
+        language.format(key, *args, fallback = { fallback().asText(language) })
+
     override fun asNode(language: AbstractLanguage): Node {
         var state = false
-        val literal = MessageFragments.literal(language.format(key, *args, fallback = { state = true; MessageFragments.literal(key).asText(language) })).asNode(language)
+        val literal = MessageFragments.literal(
+            language.format(
+                key,
+                *args,
+                fallback = { state = true; MessageFragments.literal(key).asText(language) })
+        ).asNode(language)
         return if (state) fallback().asNode(language)
         else literal
     }
@@ -126,5 +137,6 @@ class TranslatableFragment(val key: String, val args: Array<out Any?>, val fallb
 
 class MultiplyTextFragment(private val fragments: Array<out TextFragment>) : TextFragment {
     override fun asText(language: AbstractLanguage) = fragments.joinToString("") { it.asText(language) }
-    override fun asNode(language: AbstractLanguage): Element = Element("div").appendChildren(fragments.map { it.asNode(language) })
+    override fun asNode(language: AbstractLanguage): Element =
+        Element("div").appendChildren(fragments.map { it.asNode(language) })
 }

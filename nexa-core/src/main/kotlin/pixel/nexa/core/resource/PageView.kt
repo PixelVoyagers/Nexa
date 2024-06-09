@@ -10,6 +10,7 @@ open class PageView(val nexaResource: NexaResource, val resourceLoader: Resource
         val ENGINE = TemplateEngine()
     }
 
-    fun render(block: MutableMap<String, Any>.() -> Unit): String = ENGINE.process(nexaResource.contentAsString(), Context(Locale.ROOT, mutableMapOf<String, Any>().also(block)))
+    fun render(block: MutableMap<String, Any>.() -> Unit): String =
+        ENGINE.process(nexaResource.contentAsString(), Context(Locale.ROOT, mutableMapOf<String, Any>().also(block)))
 
 }

@@ -24,8 +24,9 @@
         }
     };
 </script>
-<div style="padding: 1rem; background: linear-gradient(45deg, #0079ff, #00ffbd);" id="id-card">
-    <div class="shadow-lg rounded-lg p-4 max-w-sm w-full border border-gray-300" style="background: rgba(255, 255, 255, 85%);">
+<div id="id-card" style="padding: 1rem; background: linear-gradient(45deg, #0079ff, #00ffbd);">
+    <div class="shadow-lg rounded-lg p-4 max-w-sm w-full border border-gray-300"
+         style="background: rgba(255, 255, 255, 85%);">
         <div class="flex justify-between items-center mb-2">
             <div class="flex items-center space-x-2">
                 <i class="iconoir-rocket text-2xl" style="transform: rotate(45deg);"></i>
@@ -44,8 +45,8 @@
                 </div>
             </div>
             <img alt="Bar Code" class="w-10 h-16"
-                 style="background: rgba(255, 255, 255, 85%);"
                  onerror="src = 'https://via.placeholder.com/60';"
+                 style="background: rgba(255, 255, 255, 85%);"
                  th:src="${userBarCode}">
         </div>
         <div class="flex justify-between items-center mb-2">

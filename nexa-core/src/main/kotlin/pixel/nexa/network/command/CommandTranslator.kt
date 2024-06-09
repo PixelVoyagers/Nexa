@@ -23,7 +23,9 @@ open class CommandTranslator(private val identifier: Identifier) {
      * 获取本地化选项名称
      */
     open fun getOptionName(name: String) = MessageFragments.translatable(
-        "command.${getIdentifier().getNamespace()}.${getIdentifier().getPath().split("/").joinToString("-")}.option.$name.name"
+        "command.${getIdentifier().getNamespace()}.${
+            getIdentifier().getPath().split("/").joinToString("-")
+        }.option.$name.name"
     ) { MessageFragments.literal(name) }
 
     /**
@@ -65,11 +67,19 @@ open class CommandTranslator(private val identifier: Identifier) {
     /**
      * 获取本地化指令介绍
      */
-    open fun getCommandDescription() = MessageFragments.translatable("command.${getIdentifier().getNamespace()}.${getIdentifier().getPath().split("/").joinToString("-")}.description") { MessageFragments.literal("-") }
+    open fun getCommandDescription() = MessageFragments.translatable(
+        "command.${getIdentifier().getNamespace()}.${
+            getIdentifier().getPath().split("/").joinToString("-")
+        }.description"
+    ) { MessageFragments.literal("-") }
 
     /**
      * 获取本地化标签介绍
      */
-    open fun getOptionDescription(name: String) = MessageFragments.translatable("command.${getIdentifier().getNamespace()}.${getIdentifier().getPath().split("/").joinToString("-")}.option.$name.description") { MessageFragments.literal("-") }
+    open fun getOptionDescription(name: String) = MessageFragments.translatable(
+        "command.${getIdentifier().getNamespace()}.${
+            getIdentifier().getPath().split("/").joinToString("-")
+        }.option.$name.description"
+    ) { MessageFragments.literal("-") }
 
 }

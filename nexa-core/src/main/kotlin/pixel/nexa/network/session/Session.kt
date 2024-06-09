@@ -2,11 +2,11 @@ package pixel.nexa.network.session
 
 import pixel.auxframework.component.factory.getComponent
 import pixel.nexa.core.platform.adapter.NexaBot
+import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.Languages
 import pixel.nexa.network.entity.guild.Channel
 import pixel.nexa.network.entity.guild.Guild
 import pixel.nexa.network.entity.user.User
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.Languages
 
 /**
  * 会话
@@ -16,7 +16,8 @@ interface ISession : ISenderCallback, IReplyCallback {
     /**
      * 获取用户语言
      */
-    fun getLanguage(): AbstractLanguage = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getDefault()
+    fun getLanguage(): AbstractLanguage =
+        getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getDefault()
 
     /**
      * 获取公会

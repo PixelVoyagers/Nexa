@@ -40,14 +40,17 @@ class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val
                     override suspend fun deleteOriginal() = suspendCoroutine { delete ->
                         it.deleteOriginal().queue { delete.resume(Unit) }
                     }
+
                     override suspend fun getOriginal() = suspendCoroutine { get ->
                         it.retrieveOriginal().queue { message -> get.resume(message.toNexaMessage()) }
                     }
+
                     override suspend fun editOriginal(block: MutableMessageData.() -> Unit): Message {
                         val original = getOriginal()
                         return suspendCoroutine { edit ->
                             it.editOriginal(
-                                original.toMutable().also(block).toDiscordMessageCreateData(getLanguage()).toMessageEditData()
+                                original.toMutable().also(block).toDiscordMessageCreateData(getLanguage())
+                                    .toMessageEditData()
                             ).queue { queue -> edit.resume(DiscordOriginalMessage(getLanguage(), queue)) }
                         }
                     }
@@ -57,13 +60,15 @@ class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val
     }
 
 
-    override suspend fun replyLazy(message: String, block: suspend () -> MessageData): Message = suspendCoroutine { continuation ->
-        slash.reply(message).queue {
-            it.editOriginal(runBlocking { block() }.toDiscordMessageCreateData(getLanguage()).toMessageEditData()).queue { message ->
-                continuation.resume(DiscordOriginalMessage(getLanguage(), message))
+    override suspend fun replyLazy(message: String, block: suspend () -> MessageData): Message =
+        suspendCoroutine { continuation ->
+            slash.reply(message).queue {
+                it.editOriginal(runBlocking { block() }.toDiscordMessageCreateData(getLanguage()).toMessageEditData())
+                    .queue { message ->
+                        continuation.resume(DiscordOriginalMessage(getLanguage(), message))
+                    }
             }
         }
-    }
 
 }
 
@@ -73,13 +78,18 @@ abstract class DiscordMessage(private val id: String) : Message {
 
 }
 
-class DiscordOriginalMessage(private val language: AbstractLanguage, private val message: net.dv8tion.jda.api.entities.Message) : DiscordMessage(message.id) {
+class DiscordOriginalMessage(
+    private val language: AbstractLanguage,
+    private val message: net.dv8tion.jda.api.entities.Message
+) : DiscordMessage(message.id) {
     override suspend fun deleteOriginal() = suspendCoroutine { delete ->
         message.delete().queue { delete.resume(Unit) }
     }
+
     override suspend fun getOriginal() = suspendCoroutine { get ->
         message.channel.retrieveMessageById(getMessageId()).queue { message -> get.resume(message.toNexaMessage()) }
     }
+
     override suspend fun editOriginal(block: MutableMessageData.() -> Unit): Message {
         val original = getOriginal()
         return suspendCoroutine { edit ->

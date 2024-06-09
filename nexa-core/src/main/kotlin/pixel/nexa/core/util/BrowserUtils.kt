@@ -37,12 +37,17 @@ object BrowserUtils {
         page.navigate(defaultURI.toString())
         page.setContent(html)
         val viewport = page.viewportSize()
-        val height = page.evaluate("window?.nexa?.viewport?.height ?? document.documentElement.scrollHeight")?.toString()?.toInt() ?: viewport.height
-        val width = page.evaluate("window?.nexa?.viewport?.width ?? document.documentElement.scrollWidth")?.toString()?.toInt() ?: viewport.width
+        val height =
+            page.evaluate("window?.nexa?.viewport?.height ?? document.documentElement.scrollHeight")?.toString()
+                ?.toInt() ?: viewport.height
+        val width =
+            page.evaluate("window?.nexa?.viewport?.width ?? document.documentElement.scrollWidth")?.toString()?.toInt()
+                ?: viewport.width
         page.setViewportSize(width, height)
         val selector = page.evaluate("window?.nexa?.screenshot?.selector ?? 'html'")
         page.querySelector(selector.toString())
-        val screenshot = page.querySelector(selector.toString()).screenshot(ElementHandle.ScreenshotOptions().setType(type))
+        val screenshot =
+            page.querySelector(selector.toString()).screenshot(ElementHandle.ScreenshotOptions().setType(type))
         page.close()
         return screenshot
     }

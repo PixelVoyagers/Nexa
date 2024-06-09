@@ -31,7 +31,14 @@ object OptionTypes {
 /**
  * 选项
  */
-open class Option (private val command: NexaCommand, private val name: String, private val type: Identifier, private val autoCompleteMode: NexaCommand.Option.AutoCompleteMode, private val isRequired: Boolean, private var receiverType: KClass<*>? = null) {
+open class Option(
+    private val command: NexaCommand,
+    private val name: String,
+    private val type: Identifier,
+    private val autoCompleteMode: NexaCommand.Option.AutoCompleteMode,
+    private val isRequired: Boolean,
+    private var receiverType: KClass<*>? = null
+) {
 
     fun getReceiverType() = receiverType
 

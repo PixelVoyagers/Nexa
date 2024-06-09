@@ -12,19 +12,35 @@ interface CommandInteractionEventHandler {
 
 interface CommandInteractionAutowireEventHandler {
 
-    fun handleCommandInteractionAutowireEvent(session: CommandSession, parameter: KParameter, command: NexaCommand, result: Option<Any?>): Option<Any?>
+    fun handleCommandInteractionAutowireEvent(
+        session: CommandSession,
+        parameter: KParameter,
+        command: NexaCommand,
+        result: Option<Any?>
+    ): Option<Any?>
 
 }
 
 interface CommandInteractionArgumentAutowireEventHandler {
 
-    fun handleCommandInteractionArgumentAutowireEvent(session: CommandSession, parameter: KParameter, command: NexaCommand, result: Option<Any?>): Option<Any?>
+    fun handleCommandInteractionArgumentAutowireEvent(
+        session: CommandSession,
+        parameter: KParameter,
+        command: NexaCommand,
+        result: Option<Any?>
+    ): Option<Any?>
 
 }
 
 interface CommandInteractionOptionAutowireEventHandler {
 
-    fun handleCommandInteractionOptionAutowireEvent(session: CommandSession, parameter: KParameter, optionMapping: OptionMapping, command: NexaCommand, result: Option<Any?>): Option<Any?>
+    fun handleCommandInteractionOptionAutowireEvent(
+        session: CommandSession,
+        parameter: KParameter,
+        optionMapping: OptionMapping,
+        command: NexaCommand,
+        result: Option<Any?>
+    ): Option<Any?>
 
 }
 

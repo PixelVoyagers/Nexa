@@ -25,10 +25,19 @@ class DiscordCommandAutowireProcessor(private val context: NexaContext) : Comman
         if (!parameter.hasAnnotation<NexaCommand.Option>()) return result
         val optionMapping = session.slash.getOption(NexaCommand.Option.getName(parameter))
         if (optionMapping != null) {
-            val mapping = DiscordOptionMapping(command.getCommandData().getOptions().firstOrNull { it.getName() == optionMapping.name }, optionMapping)
+            val mapping = DiscordOptionMapping(
+                command.getCommandData().getOptions().firstOrNull { it.getName() == optionMapping.name }, optionMapping
+            )
             var handlerResult: Option<Any?> = None
-            for (handler in command.getNexaContext().getAuxContext().componentFactory().getComponents<CommandInteractionOptionAutowireEventHandler>()) {
-                handlerResult = handler.handleCommandInteractionOptionAutowireEvent(session, parameter, mapping, command, handlerResult)
+            for (handler in command.getNexaContext().getAuxContext().componentFactory()
+                .getComponents<CommandInteractionOptionAutowireEventHandler>()) {
+                handlerResult = handler.handleCommandInteractionOptionAutowireEvent(
+                    session,
+                    parameter,
+                    mapping,
+                    command,
+                    handlerResult
+                )
             }
             return handlerResult
         }

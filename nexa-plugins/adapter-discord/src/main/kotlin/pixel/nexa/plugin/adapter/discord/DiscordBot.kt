@@ -29,8 +29,12 @@ import kotlin.coroutines.suspendCoroutine
 class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
-        val commands = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandContainer>().getAll()
-        val command = commands.first { event.fullCommandName == it.getCommandData().getIdentifier().format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" } }
+        val commands =
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandContainer>().getAll()
+        val command = commands.first {
+            event.fullCommandName == it.getCommandData().getIdentifier()
+                .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
+        }
         val session = DiscordCommandSession(event, bot)
         runBlocking {
             command.getCommandData().getAction().invoke(session)
@@ -91,10 +95,17 @@ class DiscordBot(private val discordAdapter: DiscordAdapter, private val config:
         for (command in commands.getAll()) {
             val name = command.getCommandData().getIdentifier()
             val commandData = Commands.slash(
-                name.format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }, ConstantUtils.EMPTY_COMMAND_DESCRIPTION
+                name.format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" },
+                ConstantUtils.EMPTY_COMMAND_DESCRIPTION
             )
             for (option in command.getCommandData().getOptions()) {
-                commandData.addOption(DiscordUtils.toDiscordOptionType(option.getType()), option.getName(), ConstantUtils.EMPTY_COMMAND_OPTION_DESCRIPTION, option.isRequired(), option.getAutoCompleteMode() != NexaCommand.Option.AutoCompleteMode.DISABLED)
+                commandData.addOption(
+                    DiscordUtils.toDiscordOptionType(option.getType()),
+                    option.getName(),
+                    ConstantUtils.EMPTY_COMMAND_OPTION_DESCRIPTION,
+                    option.isRequired(),
+                    option.getAutoCompleteMode() != NexaCommand.Option.AutoCompleteMode.DISABLED
+                )
             }
             command.getCommandData().getNexaCommand().also {
                 val translation = it.commandTranslator

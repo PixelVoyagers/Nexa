@@ -36,7 +36,10 @@ class IdCardCommand(private val assetsMap: AssetsMap) : NexaCommand() {
     }
 
     @Action
-    suspend fun handle(@Argument session: CommandSession, @Option(name = "user", type = OptionTypes.USER, required = false) input: String? = null) {
+    suspend fun handle(
+        @Argument session: CommandSession,
+        @Option(name = "user", type = OptionTypes.USER, required = false) input: String? = null
+    ) {
         val userId = input ?: session.getUserId()
         val user = session.getBot().internal().getUserById(userId)
         session.replyLazy {
@@ -49,7 +52,10 @@ class IdCardCommand(private val assetsMap: AssetsMap) : NexaCommand() {
                     put("userId", userId)
                     put("userPlatform", user.getBot().getAdapter().getPlatform())
                     put("permissionLevelName", "USER")
-                    put("userAvatarUrl", user.getEffectiveAvatarURL() ?: user.getAvatarURL() ?: user.getDefaultAvatarURL() ?: "")
+                    put(
+                        "userAvatarUrl",
+                        user.getEffectiveAvatarURL() ?: user.getAvatarURL() ?: user.getDefaultAvatarURL() ?: ""
+                    )
                     put("userBarCode", generateCode("${user.getBot().getAdapter().getPlatform()}:${userId}"))
                 }
             )

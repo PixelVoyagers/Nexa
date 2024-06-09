@@ -32,7 +32,8 @@ abstract class NexaCommand {
     private val commandData = CommandData(this)
     open val commandTranslator: CommandTranslator = CommandTranslator(getCommandData().getIdentifier())
 
-    @Autowired var context: NexaContext? = null
+    @Autowired
+    var context: NexaContext? = null
 
     /**
      * 获取指令内部数据
@@ -56,6 +57,7 @@ abstract class NexaCommand {
         enum class AutoCompleteMode {
             DEFAULT, ENABLED, DISABLED
         }
+
         companion object {
 
             fun getName(parameter: KParameter): String {
@@ -92,11 +94,22 @@ class CommandData(private val command: NexaCommand) {
      */
     fun getAction() = action
 
-    private val options: Set<Option> = getAction().getMethod().parameters.asSequence().filter { it.hasAnnotation<NexaCommand.Option>() }
-        .map {
-            val annotation = it.findAnnotation<NexaCommand.Option>()!!
-            Pair(Option(this.getNexaCommand(), NexaCommand.Option.getName(it), identifierOf(annotation.type, NexaCore.DEFAULT_NAMESPACE), annotation.autoComplete, annotation.required, receiverType = it.type.classifier as? KClass<*>), annotation.register)
-        }.filter { it.second }.map { it.first }.toSet()
+    private val options: Set<Option> =
+        getAction().getMethod().parameters.asSequence().filter { it.hasAnnotation<NexaCommand.Option>() }
+            .map {
+                val annotation = it.findAnnotation<NexaCommand.Option>()!!
+                Pair(
+                    Option(
+                        this.getNexaCommand(),
+                        NexaCommand.Option.getName(it),
+                        identifierOf(annotation.type, NexaCore.DEFAULT_NAMESPACE),
+                        annotation.autoComplete,
+                        annotation.required,
+                        receiverType = it.type.classifier as? KClass<*>
+                    ), annotation.register
+                )
+            }.filter { it.second }.map { it.first }.toSet()
+
     fun getOptions() = options
 
     /**
@@ -177,12 +190,17 @@ class CommandAutowireProcessor : CommandInteractionAutowireEventHandler {
         result: arrow.core.Option<Any?>
     ): arrow.core.Option<Any?> {
         if (parameter.hasAnnotation<Autowired>()) {
-            return Some(command.getNexaContext().getAuxContext().componentFactory().getComponent<ComponentProcessor>().autowire(parameter.type, parameter.annotations, mutableListOf()))
+            return Some(
+                command.getNexaContext().getAuxContext().componentFactory().getComponent<ComponentProcessor>()
+                    .autowire(parameter.type, parameter.annotations, mutableListOf())
+            )
         }
         if (parameter.hasAnnotation<NexaCommand.Argument>()) {
             var handlerResult: arrow.core.Option<Any?> = None
-            for (handler in command.getNexaContext().getAuxContext().componentFactory().getComponents<CommandInteractionArgumentAutowireEventHandler>()) {
-                handlerResult = handler.handleCommandInteractionArgumentAutowireEvent(session, parameter, command, handlerResult)
+            for (handler in command.getNexaContext().getAuxContext().componentFactory()
+                .getComponents<CommandInteractionArgumentAutowireEventHandler>()) {
+                handlerResult =
+                    handler.handleCommandInteractionArgumentAutowireEvent(session, parameter, command, handlerResult)
             }
             return handlerResult
         }

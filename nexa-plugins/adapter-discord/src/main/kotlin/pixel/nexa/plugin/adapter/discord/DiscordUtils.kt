@@ -57,10 +57,11 @@ object DiscordUtils {
         this.getLocaleTag(DiscordAdapter.PLATFORM_NAME) == it.locale
     } ?: DiscordLocale.UNKNOWN
 
-    fun DiscordLocale.toNexa(context: NexaContext, default: AbstractLanguage? = null) = context.getAuxContext().componentFactory().getComponent<Languages>().let { languages ->
-        languages.getLanguages().toList().firstOrNull {
-            it.second.getLocaleTag(DiscordAdapter.PLATFORM_NAME) == this.locale
-        }?.second ?: (default ?: languages.getDefault())
-    }
+    fun DiscordLocale.toNexa(context: NexaContext, default: AbstractLanguage? = null) =
+        context.getAuxContext().componentFactory().getComponent<Languages>().let { languages ->
+            languages.getLanguages().toList().firstOrNull {
+                it.second.getLocaleTag(DiscordAdapter.PLATFORM_NAME) == this.locale
+            }?.second ?: (default ?: languages.getDefault())
+        }
 
 }
