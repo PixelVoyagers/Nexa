@@ -8,7 +8,9 @@ import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.component.annotation.Service
 import pixel.auxframework.component.factory.*
 import pixel.auxframework.context.builtin.SimpleListRepository
+import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.identifierOf
+import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.util.StringUtils
@@ -16,10 +18,12 @@ import pixel.nexa.network.session.CommandSession
 import pixel.nexa.network.session.ISession
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.kotlinFunction
 
 
@@ -44,6 +48,10 @@ abstract class NexaCommand {
      * 获取指令所在上下文
      */
     fun getNexaContext() = context!!
+
+    @Target(AnnotationTarget.FUNCTION)
+    @Retention(AnnotationRetention.RUNTIME)
+    annotation class AutoComplete(vararg val option: String)
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.RUNTIME)
@@ -112,6 +120,12 @@ class CommandData(private val command: NexaCommand) {
 
     fun getOptions() = options
 
+    private val autoComplete: MutableMap<Array<out String>, KFunction<*>> = getNexaCommand()::class.memberFunctions.filter {
+        it.hasAnnotation<NexaCommand.AutoComplete>()
+    }.associateBy { it.findAnnotation<NexaCommand.AutoComplete>()!!.option }.toMutableMap()
+
+    fun getAutoComplete() = autoComplete
+
     /**
      * 获取指令注解
      * @see Command
@@ -166,14 +180,29 @@ class CommandAction(private val data: CommandData) {
 
 }
 
+data class CommandAutoComplete(val input: String, val option: String, val result: MutableList<Choice>) {
+
+    data class Choice(val display: String, val value: String = display, val important: Boolean = false)
+
+}
+
 @Repository
 interface CommandContainer : SimpleListRepository<NexaCommand>
 
 @Service
-class CommandService(private val container: CommandContainer) : ComponentPostProcessor {
+class CommandService(private val container: CommandContainer, nexaCore: NexaCore) : ComponentPostProcessor {
+
+    data class Config(val commands: MutableMap<Identifier, CommandConfig> = mutableMapOf()) {
+
+        data class CommandConfig(var enabled: Boolean = true)
+
+    }
+
+    val config = nexaCore.getDirectory("config/nexa/command/").useAuxConfig<Config>("command.yml")
 
     override fun processComponent(componentDefinition: ComponentDefinition, instance: Any?) = instance.also {
         if (instance !is NexaCommand) return@also
+        if (config.commands[instance.getCommandData().getIdentifier()]?.enabled == false) return@also
         if (instance::class.hasAnnotation<Command>())
             container.add(instance)
     }

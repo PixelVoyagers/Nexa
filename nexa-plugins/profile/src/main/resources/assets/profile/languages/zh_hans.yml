@@ -6,3 +6,6 @@ command.profile:
     name: 身份卡
     option.user:
       name: 用户
+  luck:
+    name: 幸运值
+    description: 查询今日幸运值

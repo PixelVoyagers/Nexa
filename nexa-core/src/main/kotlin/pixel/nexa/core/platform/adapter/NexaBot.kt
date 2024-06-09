@@ -10,6 +10,8 @@ interface NexaBot<S : NexaBot<S>> {
 
     }
 
+    fun getSelfId(): String
+
     fun getAdapter(): NexaAdapter<S, *>
 
     fun getName(): String

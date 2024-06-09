@@ -1,0 +1,15 @@
+text.help:
+  help: 帮助
+  command: 命令
+  option: 选项
+  description: 介绍
+  type: 类型
+  required: 必需
+
+command.help.help:
+  name: 帮助
+  description: 查询指令帮助
+  option:
+    command:
+      name: 指令名称
+      description: 查询指定指令的帮助

@@ -1,0 +1,14 @@
+text.help:
+  help: Help
+  command: Command
+  option: Option
+  description: Description
+  type: Type
+  required: Required
+
+command.help.help:
+  name: help
+  description: A command to query command help
+  option:
+    command:
+      description: Query help for specified commands

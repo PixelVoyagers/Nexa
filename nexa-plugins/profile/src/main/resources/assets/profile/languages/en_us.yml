@@ -6,3 +6,6 @@ command.profile:
     name: id-card
     option.user:
       name: user
+  luck:
+    name: luck
+    description: A command to query today's luck value

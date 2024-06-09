@@ -15,7 +15,7 @@ class DiscordAdapter : AbstractNexaAdapter<DiscordBot, DiscordAdapter.Config>() 
 
     class Config : AbstractNexaAdapter.Companion.Config()
 
-    override fun getBots() = memorize {
+    override fun getBots() = memorize(this) {
         getConfig().bots.map {
             val bot = DiscordBot(this@DiscordAdapter, it)
             bot.setName(it["name"].toString())

@@ -25,7 +25,7 @@ abstract class AbstractNexaAdapter<T : NexaBot<T>, C : AbstractNexaAdapter.Compa
     private val bots: Set<T> = mutableSetOf()
 
     @Suppress("UNCHECKED_CAST")
-    override fun getConfig(): C = memorize {
+    override fun getConfig(): C = memorize(this) {
         nexaContext.getAuxContext().componentFactory().getComponent<NexaConfig>().getAdapterConfig(this) as C
     }
 

@@ -5,16 +5,22 @@ import dev.minn.jda.ktx.interactions.commands.updateCommands
 import dev.minn.jda.ktx.jdabuilder.light
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.requests.GatewayIntent
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction
 import okhttp3.OkHttpClient
 import pixel.auxframework.component.factory.getComponent
+import pixel.auxframework.core.registry.Identifier
+import pixel.auxframework.core.registry.identifierOf
+import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.adapter.AbstractNexaBot
 import pixel.nexa.core.util.ConstantUtils
+import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.CommandContainer
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.putDiscordTranslations
@@ -25,6 +31,8 @@ import java.net.Proxy
 import java.net.URI
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.max
+import kotlin.reflect.full.callSuspend
 
 class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
@@ -39,6 +47,45 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
         runBlocking {
             command.getCommandData().getAction().invoke(session)
         }
+    }
+
+    override fun onCommandAutoCompleteInteraction(event: CommandAutoCompleteInteractionEvent) {
+        val command =
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandContainer>().getAll()
+                .first {
+                    event.fullCommandName == it.getCommandData().getIdentifier()
+                        .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
+                }
+        val result = mutableListOf<CommandAutoComplete.Choice>()
+        for (autoComplete in command.getCommandData().getAutoComplete()) {
+            if (event.focusedOption.name in autoComplete.key) {
+                val autoCompleteEvent =
+                    CommandAutoComplete(event.focusedOption.value, event.focusedOption.name, mutableListOf())
+                runBlocking {
+                    autoComplete.value.callSuspend(command, autoCompleteEvent)
+                }
+                result += autoCompleteEvent.result
+            }
+        }
+        val importantChoices = result.filter { it.important }
+        fun match(input: Identifier, choice: Identifier) = input.getNamespace() in choice && input.getPath() in choice.getPath()
+        val commonChoices = result.filter { that ->
+            event.focusedOption.value.let {
+                if (it in that.display) return@let true
+                if (it in that.value) return@let true
+                else return@let runCatching {
+                    match(identifierOf(it, NexaCore.DEFAULT_NAMESPACE), identifierOf(that.display, NexaCore.DEFAULT_NAMESPACE)) || match(identifierOf(it, NexaCore.DEFAULT_NAMESPACE), identifierOf(that.value, NexaCore.DEFAULT_NAMESPACE))
+                }.getOrNull()
+            } ?: false
+        }.filterNot { it.important }
+        val choices = mutableListOf<CommandAutoComplete.Choice>()
+        choices += importantChoices.take(25)
+        choices += commonChoices.take(max(25 - importantChoices.size, 0))
+        event.replyChoices(
+            choices.map {
+                Command.Choice(it.display, it.value)
+            }
+        ).queue()
     }
 
 }
@@ -56,7 +103,8 @@ class DiscordBotInternal(private val bot: DiscordBot) : AbstractNexaBot.Internal
 class DiscordBot(private val discordAdapter: DiscordAdapter, private val config: Map<String, Any>) :
     AbstractNexaBot<DiscordBot>() {
 
-    override fun internal() = DiscordBotInternal(this)
+    private val internal = DiscordBotInternal(this)
+    override fun internal() = internal
 
     val cachePool = DiscordCachePool()
 
@@ -64,6 +112,8 @@ class DiscordBot(private val discordAdapter: DiscordAdapter, private val config:
 
     private lateinit var botInstance: JDA
     fun getInstance() = botInstance
+
+    override fun getSelfId() = botInstance.selfUser.id
 
     fun login() = light(config["token"].toString(), true) {
         if ("proxy" in config) {
