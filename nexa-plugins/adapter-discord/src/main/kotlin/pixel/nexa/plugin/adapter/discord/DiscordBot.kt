@@ -68,7 +68,7 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
             }
         }
         val importantChoices = result.filter { it.important }
-        fun match(input: Identifier, choice: Identifier) = input.getNamespace() in choice && input.getPath() in choice.getPath()
+        fun match(input: Identifier, choice: Identifier) = input.getNamespace() in choice.getNamespace() && input.getPath() in choice.getPath()
         val commonChoices = result.filter { that ->
             event.focusedOption.value.let {
                 if (it in that.display) return@let true
