@@ -51,7 +51,7 @@ class IdCardCommand(private val assetsMap: AssetsMap) : NexaCommand() {
                     put("userName", user.getEffectiveName())
                     put("userId", userId)
                     put("userPlatform", user.getBot().getAdapter().getPlatform())
-                    put("permissionLevelName", "USER")
+                    put("profileType", if (user.isBot()) "BOT" else "USER")
                     put(
                         "userAvatarUrl",
                         user.getEffectiveAvatarURL() ?: user.getAvatarURL() ?: user.getDefaultAvatarURL() ?: ""

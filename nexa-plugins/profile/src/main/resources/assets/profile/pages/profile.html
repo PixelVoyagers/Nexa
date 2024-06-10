@@ -10,7 +10,7 @@
 </head>
 
 <!--/*@thymesVar id="language" type="pixel.nexa.core.resource.AbstractLanguage"*/-->
-<!--/*@thymesVar id="permissionLevelName" type="java.lang.String"*/-->
+<!--/*@thymesVar id="profileType" type="java.lang.String"*/-->
 <!--/*@thymesVar id="userAvatarUrl" type="java.lang.String"*/-->
 <!--/*@thymesVar id="userName" type="java.lang.String"*/-->
 <!--/*@thymesVar id="userBarCode" type="java.lang.String"*/-->
@@ -31,7 +31,7 @@
                 <i class="iconoir-rocket text-2xl" style="transform: rotate(45deg);"></i>
                 <span class="font-bold text-sm" th:text="${language['text.profile.id-card']}"/>
             </div>
-            <span class="text-sm font-bold" th:text="${permissionLevelName}"/>
+            <span class="text-sm font-bold" th:text="${profileType}"/>
         </div>
         <div class="text-xs text-gray-600 mb-2"></div>
         <div class="flex items-center mb-4 justify-between">

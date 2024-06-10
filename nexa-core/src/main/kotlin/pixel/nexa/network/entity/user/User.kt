@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import pixel.auxframework.component.factory.getComponent
 import pixel.auxframework.util.FunctionUtils.memorize
 import pixel.nexa.core.NexaCore
+import pixel.nexa.core.platform.adapter.NexaAdapter
 import pixel.nexa.core.platform.adapter.NexaBot
 import pixel.nexa.core.resource.AbstractLanguage
 import pixel.nexa.core.resource.Languages
@@ -92,6 +93,10 @@ abstract class User(private val bot: NexaBot<*>) {
         data.locale = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getName(language)
         dataHolder.set(data)
     }
+
+    open fun isBot(): Boolean = getBot().getAdapter().getContext().getAdapters().flatMap(NexaAdapter<*, *>::getBots).firstOrNull {
+        "${it.getAdapter().getPlatform()}:${it.getSelfId()}" == "${getBot().getAdapter().getPlatform()}:${getUserId()}"
+    } != null
 
 }
 

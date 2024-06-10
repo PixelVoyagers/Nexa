@@ -6,6 +6,8 @@ import java.io.InputStream
 
 class DiscordUser(bot: DiscordBot, private val user: net.dv8tion.jda.api.entities.User) : User(bot) {
 
+    override fun isBot() = super.isBot() || user.isBot || user.isSystem
+
     override fun getUserName() = user.name
     override fun getEffectiveName() = user.effectiveName
 
