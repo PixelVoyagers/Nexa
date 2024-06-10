@@ -1,11 +1,11 @@
 package pixel.nexa.application
 
-import kotlinx.coroutines.runBlocking
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import pixel.auxframework.application.ApplicationContext
 import pixel.auxframework.application.AuxApplication
 import pixel.auxframework.application.AuxApplicationBuilder
 import pixel.auxframework.application.Banner.Companion.VERSION_COLOR_FORMAT
+import pixel.auxframework.component.factory.BeforeContextRefresh
 import pixel.auxframework.component.factory.ComponentDefinition
 import pixel.auxframework.component.factory.getComponent
 import pixel.auxframework.component.factory.getComponents
@@ -14,7 +14,6 @@ import pixel.auxframework.logging.common.AnsiColor
 import pixel.auxframework.logging.common.AnsiFormat
 import pixel.auxframework.logging.common.AnsiStyle
 import pixel.auxframework.plugin.loader.AuxPluginContainer
-import pixel.auxframework.plugin.loader.AuxPluginLoader
 import pixel.auxframework.plugin.loader.AuxPluginLoaderConfig
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.NexaVersion
@@ -26,7 +25,7 @@ import pixel.nexa.core.resource.ResourceLoader
 import java.io.PrintStream
 
 open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBuilder) :
-    AuxApplication(nexaApplicationBuilder.getAuxApplicationBuilder()) {
+    AuxApplication(nexaApplicationBuilder.getAuxApplicationBuilder()), BeforeContextRefresh {
 
     object Banner : pixel.auxframework.application.Banner {
 
@@ -70,21 +69,19 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
         }
     }
 
-    fun getNexaApplicationBuilder() = nexaApplicationBuilder
-    fun getNexaContext() = nexaApplicationBuilder.context!!
-
-    fun loadPlugins() = runBlocking {
+    override fun beforeContextRefresh() {
         val pluginLoaderConfig = context.componentFactory().getComponent<AuxPluginLoaderConfig>()
         pluginLoaderConfig.directories += context.componentFactory().getComponent<NexaCore>().getDirectory("plugins")
-        val pluginLoader = context.componentFactory().getComponent<AuxPluginLoader>()
-        pluginLoader.initializePlugins(pluginLoader.scanPlugins())
-        context.componentFactory().getComponent<AuxPluginContainer>()
     }
+
+    fun getNexaApplicationBuilder() = nexaApplicationBuilder
+    fun getNexaContext() = nexaApplicationBuilder.context!!
 
     override fun run(vararg args: String) {
         context.componentFactory().defineComponent(ComponentDefinition(getNexaContext(), loaded = true))
         super.run(*args)
-        val pluginContainer = loadPlugins()
+        val pluginContainer = context.componentFactory().getComponent<AuxPluginContainer>()
+        log.info(pluginContainer.getAll().toString())
         context.componentFactory().getComponents<NexaContextAware>().forEach { it.setNexaContext(getNexaContext()) }
         val classLoaders = mutableSetOf(this::class.java.classLoader)
         classLoaders += this.context.classLoaders
