@@ -83,14 +83,15 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
         val pluginContainer = context.componentFactory().getComponent<AuxPluginContainer>()
         log.info(pluginContainer.getAll().toString())
         context.componentFactory().getComponents<NexaContextAware>().forEach { it.setNexaContext(getNexaContext()) }
-        val classLoaders = mutableSetOf(this::class.java.classLoader)
-        classLoaders += this.context.classLoaders
-        for (plugin in pluginContainer.getAll()) runCatching {
-            classLoaders += plugin.getPluginClassLoader()
-        }
+        loadResources(pluginContainer)
+        getNexaContext().start()
+    }
+
+    fun loadResources(pluginContainer: AuxPluginContainer) {
         val assetsMap = context.componentFactory().getComponent<AssetsMap>()
-        for (classLoader in classLoaders) {
-            context.componentFactory().getComponent<ResourceLoader>()
+        val resourceLoader = context.componentFactory().getComponent<ResourceLoader>()
+        for (classLoader in context.classLoaders) {
+            resourceLoader
                 .loadAsResourceMap("classpath:/assets", PathMatchingResourcePatternResolver(classLoader))
                 .also { resources ->
                     assetsMap.apply {
@@ -98,8 +99,18 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
                     }
                 }
         }
+        for (plugin in pluginContainer.getAll()) {
+            val classLoader = runCatching { plugin.getPluginClassLoader() }.getOrNull() ?: continue
+            val file = plugin.getPluginFile() ?: continue
+            resourceLoader
+                .loadAsResourceMap("jar:file:/${file.toPath()}!/assets", PathMatchingResourcePatternResolver(classLoader))
+                .also { resources ->
+                    assetsMap.apply {
+                        load(resources)
+                    }
+                }
+        }
         context.componentFactory().getComponents<AfterResourceLoaded>().forEach { it.afterResourceLoaded(assetsMap) }
-        getNexaContext().start()
     }
 
     override fun close() {
