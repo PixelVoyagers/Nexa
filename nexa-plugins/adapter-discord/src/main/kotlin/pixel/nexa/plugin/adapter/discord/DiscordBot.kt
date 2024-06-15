@@ -21,7 +21,7 @@ import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.adapter.AbstractNexaBot
 import pixel.nexa.core.util.ConstantUtils
 import pixel.nexa.network.command.CommandAutoComplete
-import pixel.nexa.network.command.CommandContainer
+import pixel.nexa.network.command.CommandService
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.putDiscordTranslations
 import pixel.nexa.plugin.adapter.discord.command.DiscordCommandSession
@@ -38,7 +38,7 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val commands =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandContainer>().getAll()
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>().getCommands()
         val command = commands.first {
             event.fullCommandName == it.getCommandData().getIdentifier()
                 .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
@@ -51,7 +51,7 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onCommandAutoCompleteInteraction(event: CommandAutoCompleteInteractionEvent) {
         val command =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandContainer>().getAll()
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>().getCommands()
                 .first {
                     event.fullCommandName == it.getCommandData().getIdentifier()
                         .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
@@ -115,7 +115,7 @@ class DiscordBot(private val discordAdapter: DiscordAdapter, private val config:
 
     override fun getSelfId() = botInstance.selfUser.id
 
-    fun login() = light(config["token"].toString(), true) {
+    fun login() = light(config["token"].toString(), enableCoroutines = true) {
         if ("proxy" in config) {
             val proxyUri = URI.create(config["proxy"].toString())
             setWebsocketFactory(WebSocketFactory().apply { proxySettings.setServer(proxyUri) })
@@ -140,9 +140,9 @@ class DiscordBot(private val discordAdapter: DiscordAdapter, private val config:
 
     fun updateCommands(action: CommandListUpdateAction) {
         val applicationContext = getAdapter().getContext().getAuxContext()
-        val commands = applicationContext.componentFactory().getComponent<CommandContainer>()
+        val commands = applicationContext.componentFactory().getComponent<CommandService>()
         val discordCommands = mutableSetOf<CommandData>()
-        for (command in commands.getAll()) {
+        for (command in commands.getCommands()) {
             val name = command.getCommandData().getIdentifier()
             val commandData = Commands.slash(
                 name.format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" },

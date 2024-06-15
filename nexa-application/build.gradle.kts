@@ -11,6 +11,7 @@ dependencies {
     api(project(":nexa-plugins:nexa-plugin-adapter-discord"))
     api(project(":nexa-plugins:nexa-plugin-profile"))
     api(project(":nexa-plugins:nexa-plugin-help"))
+    api(project(":nexa-plugins:nexa-plugin-adventure"))
 }
 
 dependencies {

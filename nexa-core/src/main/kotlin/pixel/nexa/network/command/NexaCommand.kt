@@ -4,15 +4,16 @@ import arrow.core.None
 import arrow.core.Some
 import pixel.auxframework.component.annotation.Autowired
 import pixel.auxframework.component.annotation.Component
-import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.component.annotation.Service
 import pixel.auxframework.component.factory.*
-import pixel.auxframework.context.builtin.SimpleListRepository
 import pixel.auxframework.core.registry.Identifier
+import pixel.auxframework.core.registry.ResourceKey
 import pixel.auxframework.core.registry.identifierOf
 import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
+import pixel.nexa.core.component.AfterNexaContextStarted
 import pixel.nexa.core.platform.NexaContext
+import pixel.nexa.core.registry.createRegistry
 import pixel.nexa.core.util.StringUtils
 import pixel.nexa.network.session.CommandSession
 import pixel.nexa.network.session.ISession
@@ -187,11 +188,19 @@ data class CommandAutoComplete(val input: String, val option: String, val result
 
 }
 
-@Repository
-interface CommandContainer : SimpleListRepository<NexaCommand>
 
 @Service
-class CommandService(private val container: CommandContainer, nexaCore: NexaCore) : ComponentPostProcessor {
+class CommandService(nexaCore: NexaCore, context: NexaContext) : ComponentPostProcessor, AfterNexaContextStarted {
+
+    val commands = context.createRegistry<NexaCommand>(ResourceKey(identifierOf("root", NexaCore.DEFAULT_NAMESPACE), identifierOf("command", NexaCore.DEFAULT_NAMESPACE))).apply {
+        unfreeze()
+    }
+
+    fun getCommands() = commands.toSet().map(Pair<Identifier, NexaCommand>::second)
+
+    override fun afterNexaContextStarted(context: NexaContext) {
+        commands.freeze()
+    }
 
     data class Config(val commands: MutableMap<Identifier, CommandConfig> = mutableMapOf()) {
 
@@ -204,8 +213,9 @@ class CommandService(private val container: CommandContainer, nexaCore: NexaCore
     override fun processComponent(componentDefinition: ComponentDefinition, instance: Any?) = instance.also {
         if (instance !is NexaCommand) return@also
         if (config.commands[instance.getCommandData().getIdentifier()]?.enabled == false) return@also
-        if (instance::class.hasAnnotation<Command>())
-            container.add(instance)
+        if (instance::class.hasAnnotation<Command>()) {
+            commands.register(instance.getCommandData().getIdentifier()) { instance }
+        }
     }
 
 }

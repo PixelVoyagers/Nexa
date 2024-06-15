@@ -6,7 +6,8 @@ import org.springframework.core.io.support.ResourcePatternResolver
 import pixel.auxframework.component.annotation.Autowired
 import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.Identifier
-import pixel.auxframework.util.FunctionUtils.memorize
+import pixel.auxframework.core.registry.identifierOf
+import pixel.nexa.core.web.NexaResourceWeb
 import java.util.*
 
 abstract class AbstractResourceLoader {
@@ -103,13 +104,12 @@ open class ResourceMap : ResourceLocationMap<NexaResource>() {
 }
 
 @Component
-class AssetsMap : ResourceMap() {
+class AssetsMap(private val pageViewEngine: PageViewEngine, private val nexaResourceWeb: NexaResourceWeb) : ResourceMap() {
 
     @Autowired
     private lateinit var loader: ResourceLoader
 
-    fun getPage(identifier: Identifier) = memorize(identifier) {
-        PageView(this[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")], loader)
-    }
+    fun getTextureAsUrl(type: String, identifier: Identifier, suffix: String = ".png") = nexaResourceWeb.getResourceUrl(identifierOf("${identifier.getNamespace()}:textures/$type/${identifier.getPath()}$suffix"))
+    fun getPage(identifier: Identifier) = pageViewEngine.getPage(identifier)
 
 }

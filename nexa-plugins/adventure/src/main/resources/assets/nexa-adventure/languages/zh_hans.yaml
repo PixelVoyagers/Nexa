@@ -1,0 +1,24 @@
+item.nexa:
+  air.name: 空气
+  coin:
+    name: 硬币
+    tooltip: 通用货币
+
+command.nexa-adventure:
+  inventory:
+    name: 库存
+  give-item:
+    name: 给予物品
+    description: 给予用户物品（需要权限）
+    option:
+      id.name: 物品标识
+      user-id.name: 用户标识
+      amount.name: 数量
+      data.name: 附加数据
+
+text:
+  nexa-adventure:
+    item: 物品
+    inventory: 库存
+    reward.item: "物品: %s"
+

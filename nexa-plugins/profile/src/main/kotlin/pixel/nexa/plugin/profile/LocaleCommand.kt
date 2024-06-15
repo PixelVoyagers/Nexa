@@ -9,7 +9,7 @@ import pixel.nexa.network.message.MutableMessageData
 import pixel.nexa.network.session.CommandSession
 import java.text.DecimalFormat
 
-@Command("profile:locale")
+@Command("${ProfilePlugin.PLUGIN_ID}:locale")
 class LocaleCommand(private val languages: Languages) : NexaCommand() {
 
     @Action

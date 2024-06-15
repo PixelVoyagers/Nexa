@@ -1,11 +1,14 @@
 text.profile:
-  id-card: 身份卡
+  e-profile: 电子档案
+  experience: 经验
+  experience.amount: "经验: %s 点"
 
 command.profile:
-  id-card:
-    name: 身份卡
-    option.user:
-      name: 用户
+  e-profile:
+    name: 电子档案
+    option:
+      hide-other.name: 隐藏其他数据
+      user.name: 用户
   luck:
     name: 幸运值
     description: 查询今日幸运值
@@ -16,3 +19,8 @@ command.profile:
     reply:
       success: "成功切换到语言: %s!"
       not-found: "语言未找到: %s!"
+  sign:
+    name: 签到
+    reply:
+      success: "签到成功! 获得了:\n%s"
+      failed: "签到失败，请 %s 后再试！"

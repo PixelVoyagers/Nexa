@@ -10,13 +10,12 @@ import pixel.nexa.core.NexaCore
 import pixel.nexa.core.component.AfterResourceLoaded
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.util.ResourceUtils
-import pixel.nexa.network.message.IDocumentSupport
 import java.util.*
 
 /**
  * 国际化配置文件
  */
-class I18NConfig {
+class LanguageConfig {
     var defaultLanguage: String = "zh_hans"
 }
 
@@ -26,7 +25,7 @@ class I18NConfig {
 @Repository
 class Languages(private val context: NexaContext, core: NexaCore) {
 
-    private val config: I18NConfig = core.getDirectory("config/nexa/i18n/").useAuxConfig<I18NConfig>("i18n.yml")
+    private val config: LanguageConfig = core.getDirectory("config/nexa/i18n/").useAuxConfig<LanguageConfig>("i18n.yml")
 
     private val languages = HashBiMap.create<String, AbstractLanguage>().apply {
         put("root", RootLanguage)
@@ -51,13 +50,7 @@ abstract class AbstractLanguage : MutableMap<String, String> by mutableMapOf() {
     open fun getLocaleTag(platform: String): String = getOrDefault("language.locale.$platform")
     abstract fun getCompletionRate(compare: AbstractLanguage): Double
     open fun format(key: String, vararg values: Any?, fallback: () -> String = { key }): String {
-        val args = values.map {
-            return@map when (it) {
-                is IDocumentSupport -> it.asNode(this)
-                else -> it
-            }
-        }.toTypedArray()
-        return getOrDefault(key, "null").let { if (it == "null") fallback() else it }.format(Locale.ROOT, *args)
+        return getOrDefault(key, "null").let { if (it == "null") fallback() else it }.format(Locale.ROOT, *values)
     }
 
     open fun getOrDefault(key: String, defaultValue: String = key) = super.getOrDefault(key, defaultValue)
@@ -68,6 +61,7 @@ abstract class AbstractLanguage : MutableMap<String, String> by mutableMapOf() {
  * 上下文语言
  */
 open class ContextLanguage(private val context: NexaContext) : AbstractLanguage() {
+
     override fun getCompletionRate(compare: AbstractLanguage): Double {
         return compare.keys.filter { this.contains(it) }.size.toDouble() / compare.keys.size.toDouble()
     }

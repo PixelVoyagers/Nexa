@@ -1,0 +1,4 @@
+name: ${gradle.project.name}
+version: ${gradle.project.version}
+dependencies:
+  - nexa-plugin-profile:*

@@ -1,11 +1,14 @@
 text.profile:
-  id-card: ID Card
+  e-profile: E-Profile
+  experience: Experience
+  experience.amount: "Experience: %s points"
 
 command.profile:
-  id-card:
-    name: id-card
-    option.user:
-      name: user
+  e-profile:
+    name: e-profile
+    option:
+      hide-other.name: hide-other
+      user.name: user
   luck:
     name: luck
     description: A command to query today's luck value
@@ -15,3 +18,8 @@ command.profile:
     reply:
       success: "Successfully switched to language: %s!"
       not-found: "Language not found: %s!"
+  sign:
+    name: sign
+    reply:
+      success: "Successful signed! Got:\n%s"
+      failed: "You can't sign yet, please try again after %s!"

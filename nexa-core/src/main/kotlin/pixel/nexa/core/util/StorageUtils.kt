@@ -1,12 +1,22 @@
 package pixel.nexa.core.util
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import de.undercouch.bson4jackson.BsonFactory
 import pixel.auxframework.util.ConfigUtils
 import pixel.nexa.core.NexaCore
 import java.io.File
 import java.nio.file.Path
-import java.util.zip.GZIPInputStream
-import java.util.zip.GZIPOutputStream
+
+enum class DataTypes(private val mapper: () -> ObjectMapper) : ConfigUtils.ConfigType {
+
+    BSON({ ObjectMapper(BsonFactory()) });
+
+    override fun <T> write(value: T): ByteArray = mapper().writeValueAsBytes(value)
+
+    override fun <T : Any> readAs(bytes: ByteArray, typeReference: TypeReference<T>): T = mapper().readValue(bytes, typeReference)
+
+}
 
 /**
  * 存储对象
@@ -112,55 +122,3 @@ class FileStorage<T : Any>(
     }
 
 }
-
-class GzipFileStorage<T : Any>(
-    private val typeRef: TypeReference<T>,
-    private val default: () -> T? = { null },
-    private val file: File,
-    private val type: ConfigUtils.ConfigType = ConfigUtils.ConfigTypes.YAML
-) : IStorage<T> {
-
-    constructor(
-        typeRef: TypeReference<T>,
-        default: () -> T? = { null },
-        path: Path,
-        type: ConfigUtils.ConfigType = ConfigUtils.ConfigTypes.YAML
-    ) : this(typeRef, default, path.toFile(), type)
-
-    constructor(
-        typeRef: TypeReference<T>,
-        default: () -> T? = { null },
-        path: String,
-        core: NexaCore,
-        type: ConfigUtils.ConfigType = ConfigUtils.ConfigTypes.YAML
-    ) : this(typeRef, default, core.getDirectoryFile("data", path), type)
-
-    override fun getDefault() = default()
-
-    override fun get(): T {
-        if (!file.exists()) reset()
-        return type.readAs(GZIPInputStream(file.inputStream()).readBytes(), typeRef)
-    }
-
-    override fun reset() {
-        flush()
-        super.reset()
-    }
-
-    override fun set(value: T) = Unit.also {
-        val gzipOutputStream = GZIPOutputStream(file.outputStream())
-        gzipOutputStream.write(type.write(value))
-    }
-
-    fun getFile() = file
-
-    override fun flush() {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-        }
-        if (file.readBytes().isEmpty()) super.reset()
-    }
-}
-
-data class NexaDataOptions(val gzip: Boolean = false)

@@ -1,0 +1,18 @@
+item.nexa:
+  air.name: Air
+  coin:
+    name: Coin
+    tooltip: Common currency
+
+command.nexa-adventure:
+  inventory:
+    name: inventory
+  give-item:
+    description: A command to give the user an item (requires permission)
+
+text:
+  nexa-adventure:
+    item: Item
+    inventory: Inventory
+    reward.item: "Item: %s"
+

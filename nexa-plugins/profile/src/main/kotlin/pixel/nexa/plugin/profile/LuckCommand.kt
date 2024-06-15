@@ -9,7 +9,7 @@ import java.time.LocalDate
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-@Command("profile:luck")
+@Command("${ProfilePlugin.PLUGIN_ID}:luck")
 class LuckCommand : NexaCommand() {
 
     fun random(botId: String, userId: String) = LocalDate.now().let { date ->

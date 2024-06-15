@@ -54,3 +54,21 @@ publishing {
         artifact(tasks.kotlinSourcesJar)
     }
 }
+
+allprojects {
+    tasks.withType<ProcessResources> {
+        val resourceTargets = listOf("plugin.yml")
+        val replaceProperties = mapOf(
+            Pair(
+                "gradle",
+                mapOf(
+                    Pair("gradle", gradle),
+                    Pair("project", this@allprojects)
+                )
+            )
+        )
+        filesMatching(resourceTargets) {
+            expand(replaceProperties)
+        }
+    }
+}

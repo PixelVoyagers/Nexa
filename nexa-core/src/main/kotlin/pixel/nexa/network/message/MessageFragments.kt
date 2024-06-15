@@ -112,21 +112,37 @@ object MessageFragments {
      * 多个片段
      */
     fun multiple(vararg fragments: TextFragment) = MultiplyTextFragment(fragments)
+    fun multiple(fragments: Iterable<TextFragment>) = MultiplyTextFragment(fragments.toList().toTypedArray())
 
 }
 
 class TranslatableFragment(val key: String, val args: Array<out Any?>, val fallback: () -> TextFragment) :
     TextFragment {
 
+    @Suppress("UNUSED_PARAMETER")
+    fun mapArguments(it: Any?, language: AbstractLanguage) = it
+    fun mapTextArguments(it: Any?, language: AbstractLanguage) = when (it) {
+        is TextFragment -> it.asText(language)
+        else -> mapArguments(it, language)
+    }
+
+    fun mapNodeArguments(it: Any?, language: AbstractLanguage) = when (it) {
+        is IDocumentSupport -> it.asNode(language)
+        else -> mapArguments(it, language)
+    }
+
     override fun asText(language: AbstractLanguage) =
-        language.format(key, *args, fallback = { fallback().asText(language) })
+        language.format(
+            key,
+            *args.map { mapTextArguments(it, language) }.toTypedArray(),
+            fallback = { fallback().asText(language) })
 
     override fun asNode(language: AbstractLanguage): Node {
         var state = false
         val literal = MessageFragments.literal(
             language.format(
                 key,
-                *args,
+                *args.map { mapNodeArguments(it, language) }.toTypedArray(),
                 fallback = { state = true; MessageFragments.literal(key).asText(language) })
         ).asNode(language)
         return if (state) fallback().asNode(language)

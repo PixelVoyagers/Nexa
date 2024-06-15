@@ -5,22 +5,22 @@ import pixel.nexa.core.resource.AbstractLanguage
 import pixel.nexa.core.resource.AssetsMap
 import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandAutoComplete
-import pixel.nexa.network.command.CommandContainer
+import pixel.nexa.network.command.CommandService
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
 import pixel.nexa.network.session.CommandSession
 
 @Command("help:help")
-class HelpCommand(private val commandContainer: CommandContainer, private val assetsMap: AssetsMap) : NexaCommand() {
+class HelpCommand(private val commandService: CommandService, private val assetsMap: AssetsMap) : NexaCommand() {
 
     @Action
     suspend fun handle(@Option("command", required = false, autoComplete = Option.AutoCompleteMode.ENABLED) commandName: String? = null, @Argument session: CommandSession): Any {
         val locale: AbstractLanguage = session.getUser().getLanguageOrNull() ?: session.getLanguage()
+        val commands = commandService.getCommands()
         return if (commandName != null)
-            handleCommandHelp(commandContainer.getAll().first { it.getCommandData().getIdentifier() == identifierOf(commandName, "nexa") }, session, locale)
+            handleCommandHelp(commands.first { it.getCommandData().getIdentifier() == identifierOf(commandName, "nexa") }, session, locale)
         else {
-            val commands = commandContainer.getAll()
             session.replyLazy {
                 MutableMessageData().add(
                     MessageFragments.pageView(
@@ -47,7 +47,7 @@ class HelpCommand(private val commandContainer: CommandContainer, private val as
 
     @AutoComplete("command")
     fun autoComplete(event: CommandAutoComplete) {
-        event.result += commandContainer.getAll().map {
+        event.result += commandService.getCommands().map {
             CommandAutoComplete.Choice(it.getCommandData().getIdentifier().toString())
         }
     }

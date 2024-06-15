@@ -1,0 +1,2 @@
+name: ${gradle.project.name}
+version: ${gradle.project.version}

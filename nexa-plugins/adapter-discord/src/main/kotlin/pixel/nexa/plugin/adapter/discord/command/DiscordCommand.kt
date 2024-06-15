@@ -30,6 +30,7 @@ class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val
             data.locale = languageName
         }
         dataHolder.set(data)
+        refresh()
     }
 
     override fun getLanguage() = getUser().getLanguageOrNull() ?: slash.userLocale.toNexa(bot.getAdapter().getContext())

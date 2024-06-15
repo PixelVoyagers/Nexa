@@ -4,6 +4,7 @@ import pixel.auxframework.core.AuxVersion
 import pixel.auxframework.web.annotation.Path
 import pixel.auxframework.web.annotation.RequestMapping
 import pixel.auxframework.web.annotation.RestController
+import pixel.auxframework.web.server.ServerConfig
 import pixel.auxframework.web.util.AuxWebResponse
 import pixel.nexa.core.NexaVersion
 import pixel.nexa.core.platform.NexaContext
@@ -40,3 +41,5 @@ class NexaCoreWeb(private val nexaContext: NexaContext) {
     }
 
 }
+
+fun ServerConfig.getServerPrefix() = "http://localhost:${port}"
