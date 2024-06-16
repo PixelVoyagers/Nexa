@@ -1,12 +1,19 @@
 package pixel.nexa.network.command
 
 import arrow.core.Option
+import pixel.auxframework.util.Reference
 import pixel.nexa.network.session.CommandSession
 import kotlin.reflect.KParameter
 
 interface CommandInteractionEventHandler {
 
     fun handleCommandInteractionEvent(session: CommandSession, command: NexaCommand, result: Any?): Any?
+
+}
+
+interface BeforeCommandInteractEventHandler {
+
+    fun handleBeforeCommandInteractionEvent(session: CommandSession, command: NexaCommand, runCommand: Reference<Boolean>)
 
 }
 

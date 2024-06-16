@@ -24,7 +24,9 @@ import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.CommandService
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.putDiscordTranslations
+import pixel.nexa.plugin.adapter.discord.DiscordUtils.toNexa
 import pixel.nexa.plugin.adapter.discord.command.DiscordCommandSession
+import pixel.nexa.plugin.adapter.discord.command.verify
 import pixel.nexa.plugin.adapter.discord.entity.DiscordUser
 import java.net.InetSocketAddress
 import java.net.Proxy
@@ -38,7 +40,8 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val commands =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>().getCommands()
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>()
+                .getCommands()
         val command = commands.first {
             event.fullCommandName == it.getCommandData().getIdentifier()
                 .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
@@ -51,16 +54,24 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onCommandAutoCompleteInteraction(event: CommandAutoCompleteInteractionEvent) {
         val command =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>().getCommands()
+            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>()
+                .getCommands()
                 .first {
                     event.fullCommandName == it.getCommandData().getIdentifier()
                         .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
                 }
         val result = mutableListOf<CommandAutoComplete.Choice>()
+        val user = bot.cachePool.getOrPut(event.user.id) { event.verify(DiscordUser(bot, event.user)) }
         for (autoComplete in command.getCommandData().getAutoComplete()) {
             if (event.focusedOption.name in autoComplete.key) {
                 val autoCompleteEvent =
-                    CommandAutoComplete(event.focusedOption.value, event.focusedOption.name, mutableListOf())
+                    CommandAutoComplete(
+                        event.focusedOption.value,
+                        event.focusedOption.name,
+                        mutableListOf(),
+                        user,
+                        user.getLanguageOrNull() ?: event.userLocale.toNexa(bot.getAdapter().getContext())
+                    )
                 runBlocking {
                     autoComplete.value.callSuspend(command, autoCompleteEvent)
                 }
@@ -68,13 +79,21 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
             }
         }
         val importantChoices = result.filter { it.important }
-        fun match(input: Identifier, choice: Identifier) = input.getNamespace() in choice.getNamespace() && input.getPath() in choice.getPath()
+        fun match(input: Identifier, choice: Identifier) =
+            input.getNamespace() in choice.getNamespace() && input.getPath() in choice.getPath()
+
         val commonChoices = result.filter { that ->
             event.focusedOption.value.let {
                 if (it in that.display) return@let true
                 if (it in that.value) return@let true
                 else return@let runCatching {
-                    match(identifierOf(it, NexaCore.DEFAULT_NAMESPACE), identifierOf(that.display, NexaCore.DEFAULT_NAMESPACE)) || match(identifierOf(it, NexaCore.DEFAULT_NAMESPACE), identifierOf(that.value, NexaCore.DEFAULT_NAMESPACE))
+                    match(
+                        identifierOf(it, NexaCore.DEFAULT_NAMESPACE),
+                        identifierOf(that.display, NexaCore.DEFAULT_NAMESPACE)
+                    ) || match(
+                        identifierOf(it, NexaCore.DEFAULT_NAMESPACE),
+                        identifierOf(that.value, NexaCore.DEFAULT_NAMESPACE)
+                    )
                 }.getOrNull()
             } ?: false
         }.filterNot { it.important }

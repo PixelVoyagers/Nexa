@@ -9,12 +9,16 @@ import pixel.auxframework.component.factory.*
 import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.ResourceKey
 import pixel.auxframework.core.registry.identifierOf
+import pixel.auxframework.util.MutableReference
 import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.component.AfterNexaContextStarted
 import pixel.nexa.core.platform.NexaContext
+import pixel.nexa.core.platform.getListenersOfType
 import pixel.nexa.core.registry.createRegistry
+import pixel.nexa.core.resource.AbstractLanguage
 import pixel.nexa.core.util.StringUtils
+import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.session.CommandSession
 import pixel.nexa.network.session.ISession
 import java.lang.reflect.Method
@@ -161,6 +165,13 @@ class CommandAction(private val data: CommandData) {
         val autowired = mutableMapOf<KParameter, Any?>()
         val command = getCommandData().getNexaCommand()
         val factory = command.getNexaContext().getAuxContext().componentFactory()
+        val nexaContext = command.getNexaContext()
+        val runCommand = MutableReference(true)
+        for (handler in nexaContext.getListenersOfType<BeforeCommandInteractEventHandler>()) {
+            if (!runCommand.get()) break
+            handler.handleBeforeCommandInteractionEvent(session, command, runCommand)
+        }
+        if (!runCommand.get()) return null
         for (parameter in getMethod().parameters) {
             if (parameter.name == null) {
                 autowired[parameter] = command
@@ -173,6 +184,7 @@ class CommandAction(private val data: CommandData) {
             }
             if (!(parameter.isOptional && result.isNone())) autowired[parameter] = result.getOrNull()
         }
+
         var result = getMethod().callSuspendBy(autowired)
         for (handler in factory.getComponents<CommandInteractionEventHandler>()) {
             result = handler.handleCommandInteractionEvent(session, command, result)
@@ -182,7 +194,7 @@ class CommandAction(private val data: CommandData) {
 
 }
 
-data class CommandAutoComplete(val input: String, val option: String, val result: MutableList<Choice>) {
+data class CommandAutoComplete(val input: String, val option: String, val result: MutableList<Choice>, val user: User, val language: AbstractLanguage) {
 
     data class Choice(val display: String, val value: String = display, val important: Boolean = false)
 

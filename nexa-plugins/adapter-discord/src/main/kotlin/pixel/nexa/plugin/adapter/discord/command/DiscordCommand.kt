@@ -3,6 +3,7 @@ package pixel.nexa.plugin.adapter.discord.command
 import dev.minn.jda.ktx.messages.MessageCreate
 import dev.minn.jda.ktx.messages.MessageEdit
 import kotlinx.coroutines.runBlocking
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.utils.FileUpload
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
@@ -19,23 +20,26 @@ import pixel.nexa.plugin.adapter.discord.entity.DiscordUser
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val bot: DiscordBot) : CommandSession() {
-
-    fun DiscordUser.verify() = this.apply {
-        val dataHolder = this.getDataStorage()
-        val data = dataHolder.get()
-        if (data.locale == null) {
-            val languages = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>()
-            val languageName = languages.getName(slash.userLocale.toNexa(bot.getAdapter().getContext())) ?: languages.getName(languages.getDefault())
-            data.locale = languageName
-        }
-        dataHolder.set(data)
-        refresh()
+fun GenericInteractionCreateEvent.verify(user: DiscordUser) = user.apply {
+    val dataHolder = this.getDataStorage()
+    val data = dataHolder.get()
+    if (data.locale == null) {
+        val languages = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>()
+        val languageName = languages.getName(userLocale.toNexa(getBot().getAdapter().getContext()))
+            ?: languages.getName(languages.getDefault())
+        data.locale = languageName
     }
+    dataHolder.set(data)
+    refresh()
+}
+
+class DiscordCommandSession(val slash: SlashCommandInteractionEvent, private val bot: DiscordBot) : CommandSession() {
 
     override fun getLanguage() = getUser().getLanguageOrNull() ?: slash.userLocale.toNexa(bot.getAdapter().getContext())
 
-    override fun getUser() = getBot().cachePool.getOrPut(slash.user.id) { DiscordUser(getBot(), slash.user).verify() }
+    override fun getUser() =
+        getBot().cachePool.getOrPut(slash.user.id) { slash.verify(DiscordUser(getBot(), slash.user)) }
+
     override fun getChannelId() = slash.channelId
     override fun getGuild() = slash.guild?.let { DiscordGuild(getBot(), it) }
     override fun getBot() = bot

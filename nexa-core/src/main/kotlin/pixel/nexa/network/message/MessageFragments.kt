@@ -13,10 +13,17 @@ import pixel.nexa.core.util.BrowserUtils
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStream
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
-interface ImageFragment : FileFragment {
+interface ImageFragment : FileFragment, IDocumentSupport {
 
     override fun getFileName(language: AbstractLanguage) = "image.png"
+
+    @OptIn(ExperimentalEncodingApi::class)
+    override fun asNode(language: AbstractLanguage): Element = Element("img")
+        .attr("alt", getFileName(language))
+        .attr("src", "data:image/${getFileName(language).split(".").last()};base64,${Base64.encode(inputStream(language).readAllBytes())}")
 
 }
 

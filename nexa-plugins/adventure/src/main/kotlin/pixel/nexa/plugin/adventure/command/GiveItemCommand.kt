@@ -6,7 +6,6 @@ import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.command.OptionTypes
-import pixel.nexa.network.entity.user.UserDataSchema
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
 import pixel.nexa.network.session.CommandSession
@@ -15,7 +14,7 @@ import pixel.nexa.plugin.adventure.entity.AdventureRegistries
 import pixel.nexa.plugin.adventure.entity.item.ItemStack
 import pixel.nexa.plugin.adventure.handler.UserInventoryHandler
 
-@Command("${AdventurePlugin.PLUGIN_ID}:give-item")
+@Command("${AdventurePlugin.PLUGIN_ID}:give-item", needPermission = true)
 class GiveItemCommand(private val adventureRegistries: AdventureRegistries, private val inventoryHandler: UserInventoryHandler) : NexaCommand() {
 
     @Action
@@ -27,8 +26,6 @@ class GiveItemCommand(private val adventureRegistries: AdventureRegistries, priv
         @Option(required = false) data: String? = null
     ) {
         val user = session.getBot().internal().getUserById(userId)
-        if (session.getUser().getDataComponents().getTyped(UserDataSchema.FIELD_PERMISSIONS.second)?.getOrNull()?.contains("${AdventurePlugin.PLUGIN_ID}:commands/give-item") != true)
-            return
         session.replyLazy {
             val item = adventureRegistries.items.get(identifierOf(id))!!
             val stack = when (data) {
@@ -50,8 +47,10 @@ class GiveItemCommand(private val adventureRegistries: AdventureRegistries, priv
 
     @AutoComplete("id")
     fun autoComplete(complete: CommandAutoComplete) {
-        complete.result += adventureRegistries.items.toList().map { it.first.toString() }.map {
-            CommandAutoComplete.Choice(it)
+        complete.result += adventureRegistries.items.toList().map {
+            CommandAutoComplete.Choice(
+                "${it.second.getName(it.second.stackTo()).asText(complete.user.getLanguageOrNull() ?: complete.language)} (${it.first})"
+            )
         }
     }
 

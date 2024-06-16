@@ -1,0 +1,5 @@
+text:
+  nexa:
+    command:
+      reply:
+        permission-denied: 权限不足！需要权限 "%s"。
