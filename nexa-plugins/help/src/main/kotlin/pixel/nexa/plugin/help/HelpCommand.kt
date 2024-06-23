@@ -56,7 +56,10 @@ class HelpCommand(private val commandService: CommandService, private val assets
     @AutoComplete("command")
     fun autoComplete(event: CommandAutoComplete) {
         event.result += commandService.getCommands().map {
-            CommandAutoComplete.Choice(it.getCommandData().getIdentifier().toString())
+            CommandAutoComplete.Choice(
+                "${it.commandTranslator.getCommandName().asText(event.user.getLanguageOrNull() ?: event.language)} (${it.getCommandData().getIdentifier()})",
+                it.getCommandData().getIdentifier().toString()
+            )
         }
     }
 

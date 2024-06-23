@@ -78,7 +78,7 @@ abstract class User(private val bot: NexaBot<*>) {
             dataStorage = FileStorage(
                 jacksonTypeRef<UserMeta>(),
                 default = { UserMeta() },
-                path = "user/${getUserInternalName()}.bson",
+                path = "${getBot().getName()}/user/${getUserInternalName()}.bson",
                 nexaCore,
                 type = DataTypes.BSON
             )
