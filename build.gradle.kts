@@ -6,6 +6,7 @@ plugins {
 }
 
 allprojects {
+
     repositories {
         mavenCentral()
         maven {
@@ -26,6 +27,7 @@ allprojects {
             attributes("Implementation-Version" to project.version)
         }
     }
+
 }
 
 group = "pixel.nexa"

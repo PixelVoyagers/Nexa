@@ -1,6 +1,7 @@
 package pixel.nexa.core.util
 
 import com.microsoft.playwright.Browser
+import com.microsoft.playwright.BrowserContext
 import com.microsoft.playwright.ElementHandle
 import com.microsoft.playwright.Playwright
 import com.microsoft.playwright.options.ScreenshotType
@@ -28,12 +29,13 @@ object BrowserUtils {
      * 浏览器实例
      */
     val browser: Browser = playwright.chromium().launch()
+    val context: BrowserContext = browser.newContext()
 
     /**
      * 截图
      */
     fun screenshot(html: String, type: ScreenshotType = ScreenshotType.PNG): ByteArray {
-        val page = browser.newPage()
+        val page = context.newPage()
         page.navigate(defaultURI.toString())
         page.setContent(html)
         val viewport = page.viewportSize()

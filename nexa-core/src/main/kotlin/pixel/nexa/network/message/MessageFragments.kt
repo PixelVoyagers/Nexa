@@ -23,7 +23,12 @@ interface ImageFragment : FileFragment, IDocumentSupport {
     @OptIn(ExperimentalEncodingApi::class)
     override fun asNode(language: AbstractLanguage): Element = Element("img")
         .attr("alt", getFileName(language))
-        .attr("src", "data:image/${getFileName(language).split(".").last()};base64,${Base64.encode(inputStream(language).readAllBytes())}")
+        .attr(
+            "src",
+            "data:image/${
+                getFileName(language).split(".").last()
+            };base64,${Base64.encode(inputStream(language).readAllBytes())}"
+        )
 
 }
 
@@ -51,7 +56,8 @@ object MessageFragments {
             Jsoup.clean(it, "", Safelist.none(), outputSettings)
         }
 
-        override fun asNode(language: AbstractLanguage) = Jsoup.parse(literalString, "", Parser.xmlParser())
+        override fun asNode(language: AbstractLanguage) =
+            Element("div").appendChildren(Parser.parseXmlFragment(literalString, ""))
     }
 
     /**

@@ -13,7 +13,8 @@ import pixel.auxframework.util.FunctionUtils.memorize
 import java.util.*
 
 @Service
-class PageViewEngine(private val resourceLoader: ResourceLoader, private val componentFactory: ComponentFactory) : AfterContextRefreshed {
+class PageViewEngine(private val resourceLoader: ResourceLoader, private val componentFactory: ComponentFactory) :
+    AfterContextRefreshed {
 
     val engine = TemplateEngine()
 
@@ -25,12 +26,20 @@ class PageViewEngine(private val resourceLoader: ResourceLoader, private val com
     private lateinit var assetsMap: AssetsMap
 
     fun getPage(identifier: Identifier) = memorize(identifier) {
-        PageView(this, assetsMap[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")], resourceLoader)
+        PageView(
+            this,
+            assetsMap[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")],
+            resourceLoader
+        )
     }
 
 }
 
-open class PageView(private val pageViewEngine: PageViewEngine, val nexaResource: NexaResource, val resourceLoader: ResourceLoader) {
+open class PageView(
+    private val pageViewEngine: PageViewEngine,
+    val nexaResource: NexaResource,
+    val resourceLoader: ResourceLoader
+) {
 
     fun render(block: MutableMap<String, Any>.() -> Unit): String {
         return pageViewEngine.engine.process(

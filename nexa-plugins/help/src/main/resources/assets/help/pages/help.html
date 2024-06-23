@@ -10,7 +10,8 @@
 
 <!--/*@thymesVar id="language" type="pixel.nexa.core.resource.AbstractLanguage"*/-->
 <!--/*@thymesVar id="commands" type="java.util.List<pixel.nexa.network.command.NexaCommand>"*/-->
-<body class="font-sans w-screen leading-normal tracking-normal flex items-center justify-center h-screen" style="background: linear-gradient(-45deg, #0eeaa5, #eeaa50);">
+<body class="font-sans w-screen leading-normal tracking-normal flex items-center justify-center h-screen"
+      style="background: linear-gradient(-45deg, #0eeaa5, #eeaa50);">
 <script>
     window.nexa = {
         screenshot: {
@@ -29,9 +30,12 @@
         </div>
         <section th:each="command : ${commands}">
             <div class="flex justify-between items-center">
-                <div class="text-xs font-bold text-gray-900 px-2" th:text="${command.getCommandTranslator().getCommandFullName().asText(language)}"></div>
-                <div class="text-xs font-bold text-gray-800 px-2" th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
-                <div class="text-xs text-gray-70 px-2" th:text="${command.getCommandData().getIdentifier().toString()}"></div>
+                <div class="text-xs font-bold text-gray-900 px-2"
+                     th:text="${command.getCommandTranslator().getCommandFullName().asText(language)}"></div>
+                <div class="text-xs font-bold text-gray-800 px-2"
+                     th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
+                <div class="text-xs text-gray-70 px-2"
+                     th:text="${command.getCommandData().getIdentifier().toString()}"></div>
             </div>
             <div class="flex justify-between items-center" style="height: 0.5rem;"></div>
         </section>

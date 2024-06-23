@@ -2,7 +2,6 @@ package pixel.nexa.network.command
 
 import arrow.core.Option
 import pixel.auxframework.util.Reference
-import pixel.nexa.network.session.CommandSession
 import kotlin.reflect.KParameter
 
 interface CommandInteractionEventHandler {
@@ -13,7 +12,11 @@ interface CommandInteractionEventHandler {
 
 interface BeforeCommandInteractEventHandler {
 
-    fun handleBeforeCommandInteractionEvent(session: CommandSession, command: NexaCommand, runCommand: Reference<Boolean>)
+    fun handleBeforeCommandInteractionEvent(
+        session: CommandSession,
+        command: NexaCommand,
+        runCommand: Reference<Boolean>
+    )
 
 }
 

@@ -2,20 +2,19 @@ package pixel.nexa.plugin.adventure.command
 
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.data.component.DataCompoundMapParser
-import pixel.nexa.network.command.Command
-import pixel.nexa.network.command.CommandAutoComplete
-import pixel.nexa.network.command.NexaCommand
-import pixel.nexa.network.command.OptionTypes
+import pixel.nexa.network.command.*
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
-import pixel.nexa.network.session.CommandSession
 import pixel.nexa.plugin.adventure.AdventurePlugin
 import pixel.nexa.plugin.adventure.entity.AdventureRegistries
 import pixel.nexa.plugin.adventure.entity.item.ItemStack
 import pixel.nexa.plugin.adventure.handler.UserInventoryHandler
 
 @Command("${AdventurePlugin.PLUGIN_ID}:give-item", needPermission = true)
-class GiveItemCommand(private val adventureRegistries: AdventureRegistries, private val inventoryHandler: UserInventoryHandler) : NexaCommand() {
+class GiveItemCommand(
+    private val adventureRegistries: AdventureRegistries,
+    private val inventoryHandler: UserInventoryHandler
+) : NexaCommand() {
 
     @Action
     suspend fun handle(
@@ -49,7 +48,11 @@ class GiveItemCommand(private val adventureRegistries: AdventureRegistries, priv
     fun autoComplete(complete: CommandAutoComplete) {
         complete.result += adventureRegistries.items.toList().map {
             CommandAutoComplete.Choice(
-                "${it.second.getName(it.second.stackTo()).asText(complete.user.getLanguageOrNull() ?: complete.language)} (${it.first})"
+                "${
+                    it.second.getName(it.second.stackTo())
+                        .asText(complete.user.getLanguageOrNull() ?: complete.language)
+                } (${it.first})",
+                it.first.toString()
             )
         }
     }

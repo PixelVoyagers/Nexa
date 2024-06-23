@@ -60,7 +60,7 @@ class CompoundTagParser : Parser<CompoundTag>() {
 
     override fun parse(): CompoundTag {
         val items = include(ListParser(pair(), "{", "}", ","))
-        return compoundTagOf(*items.toTypedArray())
+        return compoundTagOf(items.toMap())
     }
 
     fun pair() = parser {

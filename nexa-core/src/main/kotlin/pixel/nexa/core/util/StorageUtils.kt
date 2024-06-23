@@ -14,7 +14,8 @@ enum class DataTypes(private val mapper: () -> ObjectMapper) : ConfigUtils.Confi
 
     override fun <T> write(value: T): ByteArray = mapper().writeValueAsBytes(value)
 
-    override fun <T : Any> readAs(bytes: ByteArray, typeReference: TypeReference<T>): T = mapper().readValue(bytes, typeReference)
+    override fun <T : Any> readAs(bytes: ByteArray, typeReference: TypeReference<T>): T =
+        mapper().readValue(bytes, typeReference)
 
 }
 

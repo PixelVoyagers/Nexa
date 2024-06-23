@@ -1,10 +1,10 @@
 package pixel.nexa.plugin.profile
 
 import pixel.nexa.network.command.Command
+import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
-import pixel.nexa.network.session.CommandSession
 import java.time.LocalDate
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -13,7 +13,7 @@ import kotlin.random.nextInt
 class LuckCommand : NexaCommand() {
 
     fun random(botId: String, userId: String) = LocalDate.now().let { date ->
-        Random("${botId}-${date.year}-${date.dayOfYear}-${userId}".hashCode()).nextInt(-100 .. 100)
+        Random("${botId}-${date.year}-${date.dayOfYear}-${userId}".hashCode()).nextInt(-100..100)
     }
 
     @Action

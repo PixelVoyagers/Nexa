@@ -1,6 +1,4 @@
-package kodash.data.tag
-
-import pixel.nexa.core.data.tag.ITag
+package pixel.nexa.core.data.tag
 
 interface ITaggable<T : ITag<*>> {
 

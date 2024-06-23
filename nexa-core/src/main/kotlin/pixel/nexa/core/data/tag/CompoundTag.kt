@@ -57,7 +57,6 @@ class CompoundTag : ITag<Map<String, Any?>> {
 
     fun getList(name: String) = get(name) as? ListTag
     fun putList(name: String, tag: ListTag) = put(name, tag)
-    fun putList(name: String, iterable: Iterable<*>) = put(name, ListTag(*iterable.map(Tags::fromValue).toTypedArray()))
 
     fun getCompound(name: String) = get(name) as? CompoundTag
     fun putCompound(name: String, tag: CompoundTag) = put(name, tag)
@@ -96,7 +95,8 @@ class CompoundTag : ITag<Map<String, Any?>> {
     }
 
     override fun hashCode() = map.hashCode()
-    override fun equals(other: Any?) = other === this || (other != null && other is CompoundTag && other.hashCode() == hashCode())
+    override fun equals(other: Any?) =
+        other === this || (other != null && other is CompoundTag && other.hashCode() == hashCode())
 
     fun remove(name: String) = map.remove(name)
 

@@ -7,8 +7,8 @@ import pixel.auxframework.component.factory.getComponents
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.network.command.CommandInteractionAutowireEventHandler
 import pixel.nexa.network.command.CommandInteractionOptionAutowireEventHandler
+import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
-import pixel.nexa.network.session.CommandSession
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.hasAnnotation
 
@@ -21,7 +21,7 @@ class DiscordCommandAutowireProcessor(private val context: NexaContext) : Comman
         command: NexaCommand,
         result: Option<Any?>
     ): Option<Any?> {
-        if (session !is DiscordCommandSession) return result
+        if (session !is DiscordSlashCommandSession) return result
         if (!parameter.hasAnnotation<NexaCommand.Option>()) return result
         val optionMapping = session.slash.getOption(NexaCommand.Option.getName(parameter))
         if (optionMapping != null) {

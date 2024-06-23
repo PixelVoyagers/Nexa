@@ -4,22 +4,17 @@ import arrow.core.None
 import arrow.core.Some
 import pixel.auxframework.component.annotation.Autowired
 import pixel.auxframework.component.annotation.Component
-import pixel.auxframework.component.annotation.Service
-import pixel.auxframework.component.factory.*
-import pixel.auxframework.core.registry.Identifier
-import pixel.auxframework.core.registry.ResourceKey
+import pixel.auxframework.component.factory.ComponentProcessor
+import pixel.auxframework.component.factory.getComponent
+import pixel.auxframework.component.factory.getComponents
 import pixel.auxframework.core.registry.identifierOf
 import pixel.auxframework.util.MutableReference
-import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
-import pixel.nexa.core.component.AfterNexaContextStarted
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.platform.getListenersOfType
-import pixel.nexa.core.registry.createRegistry
 import pixel.nexa.core.resource.AbstractLanguage
 import pixel.nexa.core.util.StringUtils
 import pixel.nexa.network.entity.user.User
-import pixel.nexa.network.session.CommandSession
 import pixel.nexa.network.session.ISession
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
@@ -194,43 +189,18 @@ class CommandAction(private val data: CommandData) {
 
 }
 
-data class CommandAutoComplete(val input: String, val option: String, val result: MutableList<Choice>, val user: User, val language: AbstractLanguage) {
+data class CommandAutoComplete(
+    val input: String,
+    val option: String,
+    val result: MutableList<Choice>,
+    val user: User,
+    val language: AbstractLanguage
+) {
 
     data class Choice(val display: String, val value: String = display, val important: Boolean = false)
 
 }
 
-
-@Service
-class CommandService(nexaCore: NexaCore, context: NexaContext) : ComponentPostProcessor, AfterNexaContextStarted {
-
-    val commands = context.createRegistry<NexaCommand>(ResourceKey(identifierOf("root", NexaCore.DEFAULT_NAMESPACE), identifierOf("command", NexaCore.DEFAULT_NAMESPACE))).apply {
-        unfreeze()
-    }
-
-    fun getCommands() = commands.toSet().map(Pair<Identifier, NexaCommand>::second)
-
-    override fun afterNexaContextStarted(context: NexaContext) {
-        commands.freeze()
-    }
-
-    data class Config(val commands: MutableMap<Identifier, CommandConfig> = mutableMapOf()) {
-
-        data class CommandConfig(var enabled: Boolean = true)
-
-    }
-
-    val config = nexaCore.getDirectory("config/nexa/command/").useAuxConfig<Config>("command.yml")
-
-    override fun processComponent(componentDefinition: ComponentDefinition, instance: Any?) = instance.also {
-        if (instance !is NexaCommand) return@also
-        if (config.commands[instance.getCommandData().getIdentifier()]?.enabled == false) return@also
-        if (instance::class.hasAnnotation<Command>()) {
-            commands.register(instance.getCommandData().getIdentifier()) { instance }
-        }
-    }
-
-}
 
 @Component
 class CommandAutowireProcessor : CommandInteractionAutowireEventHandler {

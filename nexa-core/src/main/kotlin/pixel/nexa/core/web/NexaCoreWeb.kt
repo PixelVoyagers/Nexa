@@ -1,5 +1,6 @@
 package pixel.nexa.core.web
 
+import com.microsoft.playwright.Route
 import pixel.auxframework.core.AuxVersion
 import pixel.auxframework.web.annotation.Path
 import pixel.auxframework.web.annotation.RequestMapping
@@ -8,9 +9,11 @@ import pixel.auxframework.web.server.ServerConfig
 import pixel.auxframework.web.util.AuxWebResponse
 import pixel.nexa.core.NexaVersion
 import pixel.nexa.core.platform.NexaContext
+import pixel.nexa.core.util.BrowserUtils.context
+import java.util.regex.Pattern
 
 @RestController(Path("/nexa/core"))
-class NexaCoreWeb(private val nexaContext: NexaContext) {
+class NexaCoreWeb(private val nexaContext: NexaContext, serverConfig: ServerConfig) {
 
     data class Information(var aux: Aux = Aux(), var nexa: Nexa = Nexa()) {
 
@@ -37,6 +40,21 @@ class NexaCoreWeb(private val nexaContext: NexaContext) {
                     }
                 }
             }
+        }
+    }
+
+    init {
+        context.route(Pattern.compile("^nexa://internal/.*")) {
+            val uri = serverConfig.getServerPrefix() + it.request().url().removePrefix("nexa://internal")
+            val request = it.request()
+            val response = it.fetch(
+                Route.FetchOptions()
+                    .setUrl(uri)
+                    .setHeaders(request.headers())
+                    .setPostData(request.postData())
+                    .setMethod(request.method())
+            )
+            it.fulfill(Route.FulfillOptions().setResponse(response))
         }
     }
 

@@ -46,7 +46,8 @@ class DeferredRegister<T>(private val registry: NexaRegistry<T>, pluginId: Strin
     }
 
     private val pluginId: String = runCatching {
-        (Class.forName(Thread.currentThread().stackTrace[2].className).classLoader as AuxPluginClassLoader).plugin.getPluginMetadata().getName()
+        (Class.forName(Thread.currentThread().stackTrace[2].className).classLoader as AuxPluginClassLoader).plugin.getPluginMetadata()
+            .getName()
     }.getOrNull() ?: pluginId ?: NexaCore.DEFAULT_NAMESPACE
 
     private val store = HashBiMap.create<Identifier, Pair<() -> T, Boolean>>()

@@ -36,17 +36,20 @@ object DiscordUtils {
         for (locale in DiscordLocale.entries) {
             val nexaLanguage = locale.toNexa(context, default = languages.getRoot())
             if (nexaLanguage == languages.getRoot()) continue
-            commandData.setNameLocalization(locale, translation.getCommandFullName().asText(nexaLanguage))
+            commandData.setNameLocalization(locale, translation.getCommandFullName().asText(nexaLanguage).trim())
             if (commandData.type == Command.Type.SLASH && commandData is SlashCommandData) {
                 commandData.setDescriptionLocalization(
                     locale,
-                    translation.getCommandDescription().asText(nexaLanguage)
+                    translation.getCommandDescription().asText(nexaLanguage).trim()
                 )
                 for (option in commandData.options) {
-                    option.setNameLocalization(locale, translation.getOptionName(option.name).asText(nexaLanguage))
+                    option.setNameLocalization(
+                        locale,
+                        translation.getOptionName(option.name).asText(nexaLanguage).trim()
+                    )
                     option.setDescriptionLocalization(
                         locale,
-                        translation.getOptionDescription(option.name).asText(nexaLanguage)
+                        translation.getOptionDescription(option.name).asText(nexaLanguage).trim()
                     )
                 }
             }

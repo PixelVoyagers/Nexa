@@ -11,13 +11,13 @@ import pixel.auxframework.context.builtin.SimpleListRepository
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.resource.AssetsMap
 import pixel.nexa.network.command.Command
+import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.command.OptionTypes
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.IDocumentSupport
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
-import pixel.nexa.network.session.CommandSession
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
@@ -47,7 +47,8 @@ abstract class UserProfileEntries : SimpleListRepository<UserProfileEntries.User
 }
 
 @Command("${ProfilePlugin.PLUGIN_ID}:e-profile")
-class EProfileCommand(private val assetsMap: AssetsMap, private val userProfileEntries: UserProfileEntries) : NexaCommand() {
+class EProfileCommand(private val assetsMap: AssetsMap, private val userProfileEntries: UserProfileEntries) :
+    NexaCommand() {
 
     @OptIn(ExperimentalEncodingApi::class)
     fun generateCode(user: String): String {
@@ -77,7 +78,8 @@ class EProfileCommand(private val assetsMap: AssetsMap, private val userProfileE
                 MessageFragments.pageView(
                     assetsMap.getPage(identifierOf("${ProfilePlugin.PLUGIN_ID}:profile.html"))
                 ) {
-                    val language = user.getLanguageOrNull() ?: session.getUser().getLanguageOrNull() ?: session.getLanguage()
+                    val language =
+                        user.getLanguageOrNull() ?: session.getUser().getLanguageOrNull() ?: session.getLanguage()
                     put("language", language)
                     put("userName", user.getEffectiveName())
                     put("userId", userId)
@@ -94,7 +96,8 @@ class EProfileCommand(private val assetsMap: AssetsMap, private val userProfileE
                         userProfileEntries.getAll()
                             .mapNotNull {
                                 if (it.isHidden(user)) return@mapNotNull null
-                                else return@mapNotNull it.getName(user).asNode(language).toString() to it.getValue(user).asNode(language).toString()
+                                else return@mapNotNull it.getName(user).asNode(language).toString() to it.getValue(user)
+                                    .asNode(language).toString()
                             }
                             .chunked(3) {
                                 Triple(it.first(), it.getOrNull(1), it.getOrNull(2))

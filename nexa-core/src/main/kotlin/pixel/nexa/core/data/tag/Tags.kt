@@ -4,13 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import de.undercouch.bson4jackson.BsonFactory
-import kodash.data.tag.ITaggable
 import pixel.nexa.core.util.ICopyable
 import pixel.nexa.core.util.TypeUtils.convertIfNotOfType
-
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.*
 
 
 open class NumberTag<T : Number>(private val number: T) : ITag<T> {
@@ -56,7 +53,7 @@ class BigDecimalTag(number: BigDecimal) : NumberTag<BigDecimal>(number)
 class ListTag(vararg init: ITag<*>, private val list: MutableList<ITag<*>> = mutableListOf(*init)) : ITag<List<*>>,
     MutableList<ITag<*>> by list {
 
-    override fun read(): List<*> = Collections.unmodifiableList(this.map { it.read() })
+    override fun read(): List<*> = this.map { it.read() }
     override fun copy() = ListTag().apply { addAll(this.map { it.copy() }) }
 
     override fun toString(): String {
@@ -128,13 +125,15 @@ object Tags {
         if (value is BigDecimal) return BigDecimalTag(value)
         if (value is BigInteger) return BigIntTag(value)
         if (value is Number) return NumberTag(value)
-        if (value is Map<*, *>) return CompoundTag().putAll(value.mapValues { fromValue(it.value) }.mapKeys { it.key.toString() }.entries.map { it.key to it.value })
-        if (value is Iterable<*>) return ListTag(*value.map { fromValue(it) }.toTypedArray())
+        if (value is Map<*, *>) return CompoundTag().putAll(value.mapValues { fromValue(it.value) }
+            .mapKeys { it.key.toString() }.entries.map { it.key to it.value })
+        if (value is Iterable<*>) return ListTag(list = value.map { fromValue(it) }.toMutableList())
         try {
             return ObjectMapper(BsonFactory()).let {
                 it.readValue(it.writeValueAsBytes(value), jacksonTypeRef<Map<String, *>>())
             }.let(Tags::fromValue)
-        } catch (_: Throwable) { }
+        } catch (_: Throwable) {
+        }
         return UnknownTag(value)
     }
 

@@ -10,7 +10,8 @@
 
 <!--/*@thymesVar id="language" type="pixel.nexa.core.resource.AbstractLanguage"*/-->
 <!--/*@thymesVar id="command" type="pixel.nexa.network.command.NexaCommand"*/-->
-<body class="font-sans w-screen leading-normal tracking-normal flex items-center justify-center h-screen" style="background: linear-gradient(-45deg, #0eeaa5, #eeaa50);">
+<body class="font-sans w-screen leading-normal tracking-normal flex items-center justify-center h-screen"
+      style="background: linear-gradient(-45deg, #0eeaa5, #eeaa50);">
 <script>
     window.nexa = {
         screenshot: {
@@ -30,29 +31,34 @@
         </div>
         <div class="flex justify-between items-center" style="height: 0.5rem;"></div>
         <div class="flex justify-between items-center">
-            <div class="text-xl text-gray-600" th:text="${language['text.help.command']} + ' - ' + ${command.getCommandTranslator().getCommandFullName().asText(language)}"/>
+            <div class="text-xl text-gray-600"
+                 th:text="${language['text.help.command']} + ' - ' + ${command.getCommandTranslator().getCommandFullName().asText(language)}"/>
         </div>
         <div class="flex justify-between items-center" style="height: 0.5rem;"></div>
         <div class="flex justify-between items-center">
-            <div class="text-xm text-gray-600" th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
+            <div class="text-xm text-gray-600"
+                 th:text="${command.getCommandTranslator().getCommandDescription().asText(language)}"/>
         </div>
         <div class="flex justify-between items-center" style="height: 0.5rem;"></div>
         <table class="table-auto w-full" th:if="${!command.getCommandData().getOptions().isEmpty()}">
             <thead style="background: rgba(0, 255, 255, 35%);">
-                <tr>
-                    <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.option']}"/>
-                    <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.description']}"/>
-                    <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.type']}"/>
-                    <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.required']}"/>
-                </tr>
+            <tr>
+                <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.option']}"/>
+                <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.description']}"/>
+                <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.type']}"/>
+                <th class="text-lg text-gray-600 px-4 py-2" th:text="${language['text.help.required']}"/>
+            </tr>
             </thead>
             <tbody>
-                <tr style="background: rgba(255, 255, 255, 35%);" th:each="option : ${command.getCommandData().getOptions()}">
-                    <td class="border text-gray-600 px-4 py-2" th:text="${command.getCommandTranslator().getOptionName(option.getName()).asText(language)} + ' (' + ${option.getName()} + ')'"/>
-                    <td class="border text-gray-600 px-4 py-2" th:text="${command.getCommandTranslator().getOptionDescription(option.getName()).asText(language)}"/>
-                    <td class="border text-gray-600 px-4 py-2" th:text="${option.getType().toString()}"/>
-                    <td class="border text-gray-600 px-4 py-2" th:text="${option.isRequired() ? '√' : '×'}"/>
-                </tr>
+            <tr style="background: rgba(255, 255, 255, 35%);"
+                th:each="option : ${command.getCommandData().getOptions()}">
+                <td class="border text-gray-600 px-4 py-2"
+                    th:text="${command.getCommandTranslator().getOptionName(option.getName()).asText(language)} + ' (' + ${option.getName()} + ')'"/>
+                <td class="border text-gray-600 px-4 py-2"
+                    th:text="${command.getCommandTranslator().getOptionDescription(option.getName()).asText(language)}"/>
+                <td class="border text-gray-600 px-4 py-2" th:text="${option.getType().toString()}"/>
+                <td class="border text-gray-600 px-4 py-2" th:text="${option.isRequired() ? '√' : '×'}"/>
+            </tr>
             </tbody>
         </table>
         <div class="flex justify-between items-center" style="height: 0.5rem;"></div>

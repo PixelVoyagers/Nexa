@@ -4,7 +4,8 @@ import arrow.core.Some
 import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.util.toClass
-import pixel.nexa.network.session.CommandSession
+import pixel.nexa.network.message.MessageFragment
+import pixel.nexa.network.message.MessageFragments
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
@@ -83,6 +84,11 @@ interface OptionMapping {
      * 转为 [String]
      */
     fun asString(): String
+
+    /**
+     * 转为 [MessageFragment]
+     */
+    fun getMessageFragment(): MessageFragment = MessageFragments.text(asString())
 
     /**
      * 转为 [Double]

@@ -9,7 +9,12 @@ import pixel.nexa.core.NexaCore
 import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.core.data.tag.ITag
 
-class DataComponent<E, T : ITag<*>>(private val map: DataComponentMap, private val name: Identifier, private val type: IDataComponentType<E, T>, private var value: Option<E>) {
+class DataComponent<E, T : ITag<*>>(
+    private val map: DataComponentMap,
+    private val name: Identifier,
+    private val type: IDataComponentType<E, T>,
+    private var value: Option<E>
+) {
 
     fun set(value: Option<E>) {
         this.value = value
@@ -71,7 +76,8 @@ class DataComponentMap {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <E, T : ITag<*>> get(name: Identifier) = data.values.firstOrNull { it.getName() == name } as? DataComponent<E, T>
+    fun <E, T : ITag<*>> get(name: Identifier) =
+        data.values.firstOrNull { it.getName() == name } as? DataComponent<E, T>
 
     @Suppress("UNCHECKED_CAST")
     fun <E, T : ITag<*>> get(type: IDataComponentType<E, T>) = data[type] as? DataComponent<E, T>
@@ -104,7 +110,8 @@ class DataComponentMap {
     }
 
     override fun hashCode() = read().hashCode()
-    override fun equals(other: Any?) = other === this || (other != null && other is DataComponentMap && other.hashCode() == hashCode())
+    override fun equals(other: Any?) =
+        other === this || (other != null && other is DataComponentMap && other.hashCode() == hashCode())
 
     fun isEmpty() = data.isEmpty() || data.all { it.value.get() == None }
 

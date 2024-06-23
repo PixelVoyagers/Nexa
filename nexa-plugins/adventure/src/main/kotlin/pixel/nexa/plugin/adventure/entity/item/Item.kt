@@ -4,7 +4,6 @@ import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.RegistryAware
 import pixel.nexa.core.data.component.*
 import pixel.nexa.core.data.tag.CompoundTag
-import pixel.nexa.core.data.tag.ITag
 import pixel.nexa.core.data.tag.compoundTagOf
 import pixel.nexa.core.registry.NexaRegistry
 import pixel.nexa.network.message.MessageFragments
@@ -13,27 +12,26 @@ import pixel.nexa.plugin.adventure.AdventurePlugin
 
 object ItemDataComponentTypes {
 
-    object CustomDataField : IDataComponentType<CompoundTag, CompoundTag> {
-
-        override fun deserialize(tag: CompoundTag) = tag
-        override fun serialize(element: CompoundTag) = element
-
-    }
-
-    val CUSTOM_DATA = AdventurePlugin.id("custom_data") to CustomDataField
+    val CUSTOM_DATA = AdventurePlugin.id("custom_data") to CompoundTagDataType()
     val CUSTOM_NAME = AdventurePlugin.id("custom_name") to TextFragmentDataType()
     val CUSTOM_TOOLTIP = AdventurePlugin.id("custom_tooltip") to ListDataType(TextFragmentDataType())
 
 }
 
-open class Item(private val properties: Properties = Properties()) : RegistryAware<NexaRegistry<Item>> {
+open class Item(private val properties: Properties = Properties()) : RegistryAware<NexaRegistry<Item>>, ItemLike,
+    ItemStackLike {
 
-    class Properties {
+    override fun asItem() = this
+    override fun asItemStack() = stackTo()
+
+    class Properties : ChainedDataComponentMap() {
 
         private val map: DataComponentMap = DataComponentMap().apply {
             schema.putAll(SCHEMA)
             load(CompoundTag())
         }
+
+        override fun getMap() = map
 
         companion object {
 
@@ -48,25 +46,16 @@ open class Item(private val properties: Properties = Properties()) : RegistryAwa
 
         }
 
-        fun <E, T : ITag<E>> component(type: Pair<Identifier, IDataComponentType<E, T>>) = map.getTyped(type.second)?.getOrNull()
-
-        fun <E, T : ITag<E>> component(type: IDataComponentType<E, T>) = map.getTyped(type)?.getOrNull()
-        fun <E, T : ITag<E>> component(name: Identifier) = map.get<E, T>(name)?.get()?.getOrNull()
-
-        fun <E, T : ITag<E>> component(type: IDataComponentType<E, T>, value: E) = apply {
-            map.put(type, value)
+        fun rarity(level: Int) = apply {
+            component(FIELD_RARITY, level)
         }
 
-        fun <E, T : ITag<E>> component(type: Pair<Identifier, IDataComponentType<E, T>>, value: E) = component(type.second, value)
-
-        fun <E, T : ITag<E>> component(name: Identifier, value: E) = apply {
-            map.put<E, T>(name, value)
-        }
-
-        fun rarity(level: Int) = component(FIELD_RARITY, level)
         fun rarity() = component(FIELD_RARITY) ?: 0
 
-        fun showDefaultTooltip(show: Boolean) = component(FIELD_SHOW_DEFAULT_TOOLTIP, show)
+        fun showDefaultTooltip(show: Boolean) = apply {
+            component(FIELD_SHOW_DEFAULT_TOOLTIP, show)
+        }
+
         fun showDefaultTooltip() = component(FIELD_SHOW_DEFAULT_TOOLTIP) ?: false
 
         fun copy() = Properties().also {
@@ -87,10 +76,11 @@ open class Item(private val properties: Properties = Properties()) : RegistryAwa
         ItemDataComponentTypes.CUSTOM_NAME
     )
 
-    fun getDataComponentSchema() = dataComponentSchema
+    open fun getDataComponentSchema() = dataComponentSchema
 
     open fun stackTo(count: Long = 1) = ItemStack(this, count)
-    open fun getName(itemStack: ItemStack) = MessageFragments.translatable(getRegistry().get(this)!!.format { namespace, path -> "item.$namespace.$path.name" })
+    open fun getName(itemStack: ItemStack) = MessageFragments.translatable(
+        getRegistry().get(this)!!.format { namespace, path -> "item.$namespace.$path.name" })
 
 
     open fun appendTooltip(itemStack: ItemStack, components: MutableList<TextFragment>) {}

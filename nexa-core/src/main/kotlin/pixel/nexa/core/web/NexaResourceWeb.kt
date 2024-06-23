@@ -20,12 +20,13 @@ class NexaResourceWeb(private val serverCore: ServerConfig) {
     @Autowired
     private lateinit var assetsMap: AssetsMap
 
-    fun getResourceUrl(identifier: Identifier): URI = URI.create("${serverCore.getServerPrefix()}/nexa/core/resource/assets?path=$identifier")
+    fun getResourceUrl(identifier: Identifier): URI =
+        URI.create("${serverCore.getServerPrefix()}/nexa/core/resource/assets?path=$identifier")
 
 
     @RequestMapping(Path("/assets"))
     suspend fun assets(ctx: RoutingContext, @QueryVariable path: String) = ctx.call.respondBytes {
-        assetsMap.getOrNull(identifierOf(path, NexaCore.DEFAULT_NAMESPACE))?.stream()?.readAllBytes()!!
+        assetsMap.getOrNull(identifierOf(path, NexaCore.DEFAULT_NAMESPACE))?.stream()?.readAllBytes() ?: byteArrayOf()
     }
 
 }

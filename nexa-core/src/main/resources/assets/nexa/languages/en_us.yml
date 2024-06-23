@@ -2,4 +2,4 @@ text:
   nexa:
     command:
       reply:
-        permission-denied: Permission Denied! Require permission "%s".
+        permission.denied: Permission Denied! Require permission "%s".

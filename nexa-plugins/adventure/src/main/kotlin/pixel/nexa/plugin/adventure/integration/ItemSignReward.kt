@@ -14,7 +14,8 @@ class ItemSignReward(private val itemStack: ItemStack, private val inventoryHand
 
     fun copyItemStack() = itemStack.copy()
 
-    override fun getDisplay() = MessageFragments.translatable("text.nexa-adventure.reward.item", itemStack.getNameWithCount())
+    override fun getDisplay() =
+        MessageFragments.translatable("text.nexa-adventure.reward.item", itemStack.getNameWithCount())
 
     override fun giveTo(user: User) {
         inventoryHandler.editUserInventory(user) {

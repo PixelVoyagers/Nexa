@@ -10,6 +10,7 @@ import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.web.NexaResourceWeb
 import java.util.*
 
+
 abstract class AbstractResourceLoader {
 
     fun loadAsResourceMap(path: String, resolver: ResourcePatternResolver): Map<Identifier, List<NexaResource>> {
@@ -104,12 +105,15 @@ open class ResourceMap : ResourceLocationMap<NexaResource>() {
 }
 
 @Component
-class AssetsMap(private val pageViewEngine: PageViewEngine, private val nexaResourceWeb: NexaResourceWeb) : ResourceMap() {
+class AssetsMap(private val pageViewEngine: PageViewEngine, private val nexaResourceWeb: NexaResourceWeb) :
+    ResourceMap() {
 
     @Autowired
     private lateinit var loader: ResourceLoader
 
-    fun getTextureAsUrl(type: String, identifier: Identifier, suffix: String = ".png") = nexaResourceWeb.getResourceUrl(identifierOf("${identifier.getNamespace()}:textures/$type/${identifier.getPath()}$suffix"))
+    fun getTextureAsUrl(type: String, identifier: Identifier, suffix: String = ".png") =
+        nexaResourceWeb.getResourceUrl(identifierOf("${identifier.getNamespace()}:textures/$type/${identifier.getPath()}$suffix"))
+
     fun getPage(identifier: Identifier) = pageViewEngine.getPage(identifier)
 
 }

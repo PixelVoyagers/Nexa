@@ -62,9 +62,10 @@ class SignHandler(private val repository: SignRewardSupplierRepository, userData
 
     }
 
-    fun getUserLastSign(user: User): LocalDateTime? = user.getDataComponents().getTyped(userLastSignField)?.getOrNull()?.let {
-        Instant.ofEpochSecond(it).atOffset(ZoneOffset.UTC).toLocalDateTime()
-    }
+    fun getUserLastSign(user: User): LocalDateTime? =
+        user.getDataComponents().getTyped(userLastSignField)?.getOrNull()?.let {
+            Instant.ofEpochSecond(it).atOffset(ZoneOffset.UTC).toLocalDateTime()
+        }
 
 
     fun setUserLastSign(user: User, dateTime: LocalDateTime) = user.editDataComponents {

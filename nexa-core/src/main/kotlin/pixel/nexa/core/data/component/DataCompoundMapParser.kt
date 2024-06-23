@@ -20,14 +20,15 @@ class DataCompoundMapParser(val schema: Map<Identifier, IDataComponentType<*, *>
 
     companion object {
 
-        fun parseDataComponentMap(input: String, schema: Map<Identifier, IDataComponentType<*, *>>) = DataCompoundMapParser(schema).apply {
-            setState(
-                State(
-                    uri = AuroraCompiler.BLANK_URI,
-                    buffer = TokenBuffer(Tokenizer(CharBuffer.wrap(input), AuroraCompiler.BLANK_URI))
+        fun parseDataComponentMap(input: String, schema: Map<Identifier, IDataComponentType<*, *>>) =
+            DataCompoundMapParser(schema).apply {
+                setState(
+                    State(
+                        uri = AuroraCompiler.BLANK_URI,
+                        buffer = TokenBuffer(Tokenizer(CharBuffer.wrap(input), AuroraCompiler.BLANK_URI))
+                    )
                 )
-            )
-        }.parse()
+            }.parse()
 
     }
 

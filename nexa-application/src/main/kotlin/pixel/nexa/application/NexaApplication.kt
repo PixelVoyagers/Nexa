@@ -103,7 +103,10 @@ open class NexaApplication(private val nexaApplicationBuilder: NexaApplicationBu
             val classLoader = runCatching { plugin.getPluginClassLoader() }.getOrNull() ?: continue
             val file = plugin.getPluginFile() ?: continue
             resourceLoader
-                .loadAsResourceMap("jar:file:/${file.toPath()}!/assets", PathMatchingResourcePatternResolver(classLoader))
+                .loadAsResourceMap(
+                    "jar:file:/${file.toPath()}!/assets",
+                    PathMatchingResourcePatternResolver(classLoader)
+                )
                 .also { resources ->
                     assetsMap.apply {
                         load(resources)

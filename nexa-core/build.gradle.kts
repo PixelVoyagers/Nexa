@@ -15,6 +15,8 @@ dependencies {
     api("org.jsoup:jsoup:1.17.2")
     api("com.microsoft.playwright:playwright:1.44.0")
     api("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
+
+    api("io.ktor:ktor-server-websockets:3.0.0-beta-1")
 }
 
 dependencies {

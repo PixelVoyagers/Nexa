@@ -35,11 +35,13 @@ open class UserMeta {
 }
 
 @Repository
-abstract class UserDataSchema : SimpleListRepository<Pair<Identifier, IDataComponentType<*, *>>>, AfterComponentAutowired {
+abstract class UserDataSchema : SimpleListRepository<Pair<Identifier, IDataComponentType<*, *>>>,
+    AfterComponentAutowired {
 
     companion object {
 
-        val FIELD_PERMISSIONS = identifierOf("permissions", NexaCore.DEFAULT_NAMESPACE) to ListDataType(StringDataType())
+        val FIELD_PERMISSIONS =
+            identifierOf("permissions", NexaCore.DEFAULT_NAMESPACE) to ListDataType(StringDataType())
 
     }
 
@@ -56,7 +58,8 @@ abstract class User(private val bot: NexaBot<*>) {
     private var dataStorage: IStorage<UserMeta>? = null
 
     private val nexaCore = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<NexaCore>()
-    private val dataComponentSchema = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<UserDataSchema>()
+    private val dataComponentSchema =
+        bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<UserDataSchema>()
 
     open fun getDataComponents() = dataComponents!!
     open fun setDataComponents(map: DataComponentMap) = editData {
@@ -138,7 +141,8 @@ abstract class User(private val bot: NexaBot<*>) {
     abstract fun getDefaultAvatarURL(): String?
 
     open fun getLanguageOrNull() = getDataStorage().get().locale?.let {
-        getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getLanguageOrNull(it)
+        getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>()
+            .getLanguageOrNull(it)
     }
 
     fun getLanguage() = getLanguageOrNull()!!
@@ -146,18 +150,23 @@ abstract class User(private val bot: NexaBot<*>) {
     open fun setLanguage(language: AbstractLanguage) = apply {
         val dataHolder = getDataStorage()
         val data = dataHolder.get()
-        data.locale = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>().getName(language)
+        data.locale = getBot().getAdapter().getContext().getAuxContext().componentFactory().getComponent<Languages>()
+            .getName(language)
         dataHolder.set(data)
     }
 
-    open fun isBot(): Boolean = getBot().getAdapter().getContext().getAdapters().flatMap(NexaAdapter<*, *>::getBots).firstOrNull {
-        "${it.getAdapter().getPlatform()}:${it.getSelfId()}" == "${getBot().getAdapter().getPlatform()}:${getUserId()}"
-    } != null
+    open fun isBot(): Boolean =
+        getBot().getAdapter().getContext().getAdapters().flatMap(NexaAdapter<*, *>::getBots).firstOrNull {
+            "${it.getAdapter().getPlatform()}:${it.getSelfId()}" == "${
+                getBot().getAdapter().getPlatform()
+            }:${getUserId()}"
+        } != null
 
 }
 
 @OptIn(ExperimentalEncodingApi::class)
-fun User.getUserInternalName() = Base64.UrlSafe.encode("${getBot().getAdapter().getBotInternalName(getBot())}:${getUserId()}".toByteArray())
+fun User.getUserInternalName() =
+    Base64.UrlSafe.encode("${getBot().getAdapter().getBotInternalName(getBot())}:${getUserId()}".toByteArray())
 
 fun User.editData(block: UserMeta.() -> Unit) = apply {
     val holder = getDataStorage()

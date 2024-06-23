@@ -4,15 +4,21 @@ item.nexa:
     name: Coin
     tooltip: Common currency
 
+fluid.nexa:
+  empty.name: Empty
+
 command.nexa-adventure:
   inventory:
     name: inventory
   give-item:
-    description: A command to give the user an item (requires permission)
+    description: A command to give the user some items (requires permission)
+  give-fluid:
+    description: A command to give the user some fluids (requires permission)
 
 text:
   nexa-adventure:
     item: Item
+    fluid: Fluid
     inventory: Inventory
     reward.item: "Item: %s"
 

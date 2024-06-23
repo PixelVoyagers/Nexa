@@ -56,7 +56,3 @@ interface ISession : ISenderCallback, IReplyCallback {
 
 }
 
-/**
- * 指令会话
- */
-abstract class CommandSession : ISession

@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.message.GenericMessageEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.commands.Command
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
@@ -19,15 +20,19 @@ import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.adapter.AbstractNexaBot
+import pixel.nexa.core.platform.getListenersOfType
+import pixel.nexa.core.resource.Languages
 import pixel.nexa.core.util.ConstantUtils
 import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.CommandService
 import pixel.nexa.network.command.NexaCommand
+import pixel.nexa.network.message.GenericMessageEventHandler
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.putDiscordTranslations
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.toNexa
-import pixel.nexa.plugin.adapter.discord.command.DiscordCommandSession
+import pixel.nexa.plugin.adapter.discord.command.DiscordSlashCommandSession
 import pixel.nexa.plugin.adapter.discord.command.verify
 import pixel.nexa.plugin.adapter.discord.entity.DiscordUser
+import pixel.nexa.plugin.adapter.discord.message.DiscordMessageSession
 import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URI
@@ -38,15 +43,29 @@ import kotlin.reflect.full.callSuspend
 
 class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
+    private val componentFactory = bot.getAdapter().getContext().getAuxContext().componentFactory()
+    private val nexaContext = bot.getAdapter().getContext()
+
+    override fun onGenericMessage(event: GenericMessageEvent) =
+        event.channel.retrieveMessageById(event.messageId).queue { message ->
+            val messageSession = DiscordMessageSession(bot, event, message)
+            messageSession.setLanguage(
+                messageSession.getUser().getLanguageOrNull() ?: componentFactory.getComponent<Languages>().getDefault()
+            )
+            nexaContext.getListenersOfType<GenericMessageEventHandler>().forEach {
+                it.handleGenericMessageEvent(messageSession)
+            }
+        }
+
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         val commands =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>()
+            componentFactory.getComponent<CommandService>()
                 .getCommands()
         val command = commands.first {
             event.fullCommandName == it.getCommandData().getIdentifier()
                 .format { namespace, path -> "$namespace-${path.split("/").joinToString("-")}" }
         }
-        val session = DiscordCommandSession(event, bot)
+        val session = DiscordSlashCommandSession(command, event, bot)
         runBlocking {
             command.getCommandData().getAction().invoke(session)
         }
@@ -54,7 +73,7 @@ class DiscordBotListener(private val bot: DiscordBot) : ListenerAdapter() {
 
     override fun onCommandAutoCompleteInteraction(event: CommandAutoCompleteInteractionEvent) {
         val command =
-            bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<CommandService>()
+            componentFactory.getComponent<CommandService>()
                 .getCommands()
                 .first {
                     event.fullCommandName == it.getCommandData().getIdentifier()

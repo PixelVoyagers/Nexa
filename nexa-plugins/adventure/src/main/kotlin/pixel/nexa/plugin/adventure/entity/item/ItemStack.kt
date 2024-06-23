@@ -19,7 +19,8 @@ class ItemStackDataType(private val registry: AdventureRegistries) : IDataCompon
 
     override fun deserialize(tag: CompoundTag): ItemStack {
         val count = tag.getLong("count") ?: 1
-        val item  = registry.items.get(tag.getString("item")?.let(AdventurePlugin::id) ?: items.airItem.getLocation()) ?: items.airItem.get()
+        val item = registry.items.get(tag.getString("item")?.let(AdventurePlugin::id) ?: items.airItem.getLocation())
+            ?: items.airItem.get()
         val data = tag.getCompound("data") ?: CompoundTag()
         val stack = ItemStack(item, count)
         stack.getDataComponents().load(data)
@@ -36,7 +37,11 @@ class ItemStackDataType(private val registry: AdventureRegistries) : IDataCompon
 
 }
 
-class ItemStack(private val item: Item, private var count: Long = 1, private val dataComponentMap: DataComponentMap = DataComponentMap()) : ItemLike, ItemStackLike {
+class ItemStack(
+    private val item: Item,
+    private var count: Long = 1,
+    private val dataComponentMap: DataComponentMap = DataComponentMap()
+) : ItemLike, ItemStackLike {
 
     fun getDataComponents() = dataComponentMap
     fun getItem() = item
@@ -63,14 +68,20 @@ class ItemStack(private val item: Item, private var count: Long = 1, private val
     fun getTooltip(): MutableList<TextFragment> {
         val tooltip = mutableListOf<TextFragment>()
         if (Item.Properties.copy(getItem()).showDefaultTooltip())
-            tooltip += MessageFragments.translatable(getItem().getRegistry().get(getItem())!!.format { namespace, path -> "item.$namespace.$path.tooltip" })
-        tooltip += getDataComponents().getTyped(ItemDataComponentTypes.CUSTOM_TOOLTIP.second)?.getOrNull() ?: emptyList()
+            tooltip += MessageFragments.translatable(
+                getItem().getRegistry().get(getItem())!!.format { namespace, path -> "item.$namespace.$path.tooltip" })
+        tooltip += getDataComponents().getTyped(ItemDataComponentTypes.CUSTOM_TOOLTIP.second)?.getOrNull()
+            ?: emptyList()
         getItem().appendTooltip(this, tooltip)
         return tooltip
     }
 
     fun getNameWithCount(): TextFragment {
-        return MessageFragments.multiple(getName(), MessageFragments.text(" * "), MessageFragments.text(getCount().toString()))
+        return MessageFragments.multiple(
+            getName(),
+            MessageFragments.text(" * "),
+            MessageFragments.text(getCount().toString())
+        )
     }
 
     fun copy() = ItemStack(item, count).also {

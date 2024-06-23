@@ -7,7 +7,8 @@ import pixel.auxframework.core.registry.ResourceKey
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.platform.getListenersOfType
 
-class NexaRegistry<T>(private val context: NexaContext, registryKey: ResourceKey<IRegistry<T>>) : Registry<T>(registryKey) {
+class NexaRegistry<T>(private val context: NexaContext, registryKey: ResourceKey<IRegistry<T>>) :
+    Registry<T>(registryKey) {
 
     private val deferredRegistry by lazy {
         context.getAuxContext().componentFactory().getComponent<DeferredRegistry>()
@@ -16,6 +17,7 @@ class NexaRegistry<T>(private val context: NexaContext, registryKey: ResourceKey
     fun getContext() = context
 
     override fun freeze() {
+        if (isFrozen()) return
         context.getListenersOfType<BeforeRegistryFrozen>().forEach { it.beforeRegistryFrozen(this) }
         deferredRegistry.instances
             .filter { it.getRegistry().getRegistryKey() == getRegistryKey() }
@@ -25,6 +27,7 @@ class NexaRegistry<T>(private val context: NexaContext, registryKey: ResourceKey
     }
 
     override fun unfreeze() {
+        if (!isFrozen()) return
         context.getListenersOfType<BeforeRegistryUnfrozen>().forEach { it.beforeRegistryUnfrozen(this) }
         super.unfreeze()
         deferredRegistry.instances

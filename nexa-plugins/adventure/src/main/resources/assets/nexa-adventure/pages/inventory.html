@@ -11,9 +11,14 @@
 
 <!--/*@thymesVar id="language" type="pixel.nexa.core.resource.AbstractLanguage"*/-->
 <!--/*@thymesVar id="assetsMap" type="pixel.nexa.core.resource.AssetsMap"*/-->
+<!--/*@thymesVar id="page" type="java.lang.String"*/-->
 <!--/*@thymesVar id="MessageFragments" type="pixel.nexa.network.message.MessageFragments"*/-->
 <!--/*@thymesVar id="ItemProperties" type="pixel.nexa.plugin.adventure.entity.item.Item.Properties.Companion"*/-->
+<!--/*@thymesVar id="FluidProperties" type="pixel.nexa.plugin.adventure.entity.fluid.Fluid.Properties.Companion"*/-->
 <!--/*@thymesVar id="items" type="java.util.List<java.util.List<pixel.nexa.plugin.adventure.entity.item.ItemStack>>"*/-->
+<!--/*@thymesVar id="fluids" type="java.util.List<java.util.List<pixel.nexa.plugin.adventure.entity.fluid.FluidStack>>"*/-->
+<!--/*@thymesVar id="maxInt" type="kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, java.lang.Integer>"*/-->
+<!--/*@thymesVar id="toHexString" type="kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.String>"*/-->
 <body class="font-sans leading-normal tracking-normal flex items-center justify-center h-screen"
       style="background: linear-gradient(45deg, #52a4ff, #00e3ff);">
 <script>
@@ -24,12 +29,13 @@
     };
 </script>
 <div id="inventory" style="padding: 1rem; background: linear-gradient(45deg, #52a4ff, #00e3ff);">
-    <div class="shadow-lg rounded-lg p-4 max-w-sm w-full border border-gray-300"
+    <div class="shadow-lg rounded-lg p-4 max-w-4xl max-h-max w-full border border-gray-300"
          style="background: rgba(255, 255, 255, 85%);">
         <div class="flex justify-between items-center mb-2">
             <div class="flex items-center space-x-2">
                 <i class="iconoir-cube-hole text-2xl"></i>
                 <span class="font-bold text-sm" th:text="${language['text.nexa-adventure.inventory']}"/>
+                <span class="font-bold text-sm" th:text="' (' + ${page} + ')'"/>
             </div>
         </div>
         <div class="text-xs text-gray-600 mb-2"></div>
@@ -37,15 +43,46 @@
             <div class="text-xl text-gray-600" th:text="${language['text.nexa-adventure.item']}"/>
         </div>
         <div class="flex justify-between items-center mb-2 text-gray-600" th:each="chunk : ${items}">
-            <div th:each="item : ${chunk}" class="flex justify-between mb-2">
-                <img style="height: 4rem; width: 4rem; image-rendering: pixelated;" th:src="${assetsMap.getTextureAsUrl('item', item.getItem().getRegistry().get(item.getItem()), '.png')}" alt="Item Icon" onerror="src = 'https://via.placeholder.com/60';"/>
+            <div class="flex justify-between mb-2" th:each="item : ${chunk}">
+                <img alt="Item Icon" class="px-2 py-2"
+                     onerror="src = 'https://via.placeholder.com/60';"
+                     style="height: 3rem; width: 3rem; image-rendering: pixelated;" th:src="${assetsMap.getTextureAsUrl('item', item.getItem().getRegistry().get(item.getItem()), '.png')}"/>
                 <div class="px-2 py-2">
-                    <div class="text-base font-bold text-gray-700">
-                        <span th:utext="${item.getNameWithCount().asText(language)}" th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"></span>
-                        <span th:text="'(' + ${item.getItem().getRegistry().get(item.getItem())} + ')'" class="text-gray-500"/>
-                        <i class="iconoir-star-solid" style="color: #eab20e;" th:each="i : ${#numbers.sequence(0, ItemProperties.copy(item.asItem()).rarity() - 1)}"></i>
+                    <div class="text-base font-bold text-gray-700 break-words">
+                        <span th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"
+                              th:utext="${item.getNameWithCount().asText(language)}"></span>
+                        <span class="text-gray-500"
+                              th:text="'(' + ${item.getItem().getRegistry().get(item.getItem())} + ')'"/>
+                        <i class="iconoir-star-solid" style="color: #eab20e;"
+                           th:each="i : ${#numbers.sequence(0, maxInt.invoke(ItemProperties.copy(item.asItem()).rarity() - 1, 0))}"
+                           th:if="${ItemProperties.copy(item.asItem()).rarity() != 0}"></i>
                     </div>
-                    <div class="text-base text-sm" th:utext="${MessageFragments.multiple(item.getTooltip()).asText(language)}"></div>
+                    <div class="text-base text-sm"
+                         th:utext="${MessageFragments.multiple(item.getTooltip()).asNode(language).toString()}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between items-center" th:if="${!fluids.isEmpty()}">
+            <div class="text-xl text-gray-600" th:text="${language['text.nexa-adventure.fluid']}"/>
+        </div>
+        <div class="flex justify-between items-center mb-2 text-gray-600" th:each="chunk : ${fluids}">
+            <div class="flex justify-between mb-2" th:each="fluid : ${chunk}">
+                <div class="rounded-lg px-2 py-2" style="height: 3rem; width: 3rem;">
+                    <div class="rounded-lg border border-zinc-950" style="height: 100%; width: 100%;"
+                         th:styleappend="${FluidProperties.copy(fluid.getFluid()).color() == null} ? '' : 'background-color: #' + ${toHexString.invoke(FluidProperties.copy(fluid.getFluid()).color())} + ';'"></div>
+                </div>
+                <div class="px-2 py-2">
+                    <div class="text-base font-bold text-gray-700 break-words">
+                        <span th:classappend="${fluid.getDataComponents().isEmpty()} ? '' : 'italic'"
+                              th:utext="${fluid.getNameWithCount().asText(language)}"></span>
+                        <span class="text-gray-500"
+                              th:text="'(' + ${fluid.getFluid().getRegistry().get(fluid.getFluid())} + ')'"/>
+                        <i class="iconoir-star-solid" style="color: #eab20e;"
+                           th:each="i : ${#numbers.sequence(0, maxInt.invoke(FluidProperties.copy(fluid.asFluid()).rarity() - 1, 0))}"
+                           th:if="${FluidProperties.copy(fluid.asFluid()).rarity() != 0}"></i>
+                    </div>
+                    <div class="text-base text-sm"
+                         th:utext="${MessageFragments.multiple(fluid.getTooltip()).asNode(language).toString()}"></div>
                 </div>
             </div>
         </div>

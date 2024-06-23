@@ -8,6 +8,9 @@ import kotlin.reflect.full.findAnnotation
 
 class ApplicationNexaContext : NexaContext {
 
+    private var isStarted = false
+    override fun isStarted() = isStarted
+
     internal lateinit var application: NexaApplication
     fun getApplication() = application
 
@@ -17,5 +20,15 @@ class ApplicationNexaContext : NexaContext {
         .getComponents<NexaAdapter<*, *>>()
         .filter { it::class.findAnnotation<Adapter>() != null }
         .toSet()
+
+    override fun start() {
+        super.start()
+        isStarted = true
+    }
+
+    override fun stop() {
+        super.stop()
+        isStarted = false
+    }
 
 }

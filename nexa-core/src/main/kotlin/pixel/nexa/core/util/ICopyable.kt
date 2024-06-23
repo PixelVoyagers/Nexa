@@ -1,6 +1,6 @@
 package pixel.nexa.core.util
 
-interface ICopyable <T> {
+interface ICopyable<T> {
 
     fun copy(): T
 
