@@ -23,7 +23,9 @@ abstract class AbstractResourceLoader {
 
     fun load(path: String = "", resolver: ResourcePatternResolver): Sequence<NexaResource> = sequence {
         val baseDir = resolver.getResource(path)
-        val resolved = resolver.getResources("$path/**/*.*")
+        val resolved = runCatching {
+            resolver.getResources("$path/**/*.*")
+        }.getOrNull() ?: emptyArray()
         for (resource in resolved) {
             if (!resource.isReadable) continue
             try {
