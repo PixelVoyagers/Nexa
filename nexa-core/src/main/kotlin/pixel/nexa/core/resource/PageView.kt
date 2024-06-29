@@ -41,11 +41,20 @@ open class PageView(
     val resourceLoader: ResourceLoader
 ) {
 
-    fun render(block: MutableMap<String, Any>.() -> Unit): String {
+    fun render(block: PageViewContextBuilder.() -> Unit): String {
+        val builder = PageViewContextBuilder()
         return pageViewEngine.engine.process(
             nexaResource.contentAsString(),
-            Context(Locale.ROOT, mutableMapOf<String, Any>().also(block))
+            Context(Locale.ROOT, builder.also(block))
         )
+    }
+
+}
+
+open class PageViewContextBuilder : MutableMap<String, Any?> by mutableMapOf() {
+
+    operator fun String.invoke(value: Any?) {
+        put(this@invoke, value)
     }
 
 }

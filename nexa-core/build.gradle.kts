@@ -7,7 +7,7 @@ dependencies {
     api("com.github.PixelVoyagers.AuxFramework:aux-core:${property("aux.version")}")
     api("com.github.PixelVoyagers.AuxFramework:aux-application:${property("aux.version")}")
     api("com.github.PixelVoyagers.AuxFramework:aux-web:${property("aux.version")}")
-    api("com.github.PixelVoyagers.Aurora:aurora-compiler:bb159b5a59")
+    api("com.github.PixelVoyagers.Aurora:aurora-common:983fb33154")
 
     api("de.undercouch:bson4jackson:2.15.1")
     api("org.springframework:spring-core:6.1.8")

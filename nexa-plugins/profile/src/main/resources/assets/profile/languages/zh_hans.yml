@@ -2,6 +2,9 @@ text.profile:
   e-profile: 电子档案
   experience: 经验
   experience.amount: "经验: %s 点"
+  mailbox: 邮箱
+  mail: 邮件
+  attachments: 附件
 
 command.profile:
   e-profile:
@@ -24,3 +27,10 @@ command.profile:
     reply:
       success: "签到成功! 获得了:\n%s"
       failed: "签到失败，请 %s 后再试！"
+  mailbox:
+    name: 邮箱
+    option:
+      mail.name: 邮件
+      remove.name: 移除
+      receive.name: 标为已读
+      page.name: 页

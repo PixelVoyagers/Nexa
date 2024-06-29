@@ -1,4 +1,4 @@
-package pixel.nexa.plugin.profile
+package pixel.nexa.plugin.profile.command
 
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -18,6 +18,7 @@ import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.IDocumentSupport
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
+import pixel.nexa.plugin.profile.ProfilePlugin
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO

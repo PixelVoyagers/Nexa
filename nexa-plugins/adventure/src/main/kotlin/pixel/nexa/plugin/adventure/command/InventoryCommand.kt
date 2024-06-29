@@ -50,7 +50,7 @@ class InventoryCommand(
                     assetsMap.getPage(identifierOf("${AdventurePlugin.PLUGIN_ID}:inventory.html"))
                 ) {
                     val language = session.getUser().getLanguageOrNull() ?: session.getLanguage()
-                    put("page", "${pageIndex + 1} / ${max(itemChunks.size, fluidChunks.size)}")
+                    put("page", "${pageIndex + 1} / ${max(max(itemChunks.size, fluidChunks.size), 1)}")
                     put("language", language)
                     put("MessageFragments", MessageFragments)
                     put("ItemProperties", Item.Properties)

@@ -1,8 +1,9 @@
-package pixel.nexa.plugin.profile
+package pixel.nexa.plugin.profile.command
 
 import pixel.nexa.core.resource.Languages
 import pixel.nexa.network.command.*
 import pixel.nexa.network.message.MutableMessageData
+import pixel.nexa.plugin.profile.ProfilePlugin
 import java.text.DecimalFormat
 
 @Command("${ProfilePlugin.PLUGIN_ID}:locale")

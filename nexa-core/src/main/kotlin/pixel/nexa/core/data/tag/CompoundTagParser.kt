@@ -1,8 +1,8 @@
 package pixel.nexa.core.data.tag
 
 import pixel.aurora.compiler.parser.*
-import pixel.aurora.compiler.parser.expression.IdentifierParser
 import pixel.aurora.compiler.parser.util.ListParser
+import pixel.aurora.compiler.parser.util.RawIdentifierParser
 import pixel.aurora.compiler.tokenizer.NumericToken
 import pixel.aurora.compiler.tokenizer.StringToken
 import pixel.aurora.compiler.tokenizer.TokenType
@@ -39,7 +39,7 @@ class NumberTagParser : Parser<NumberTag<*>>() {
 
     override fun parse(): NumberTag<*> {
         val number = (buffer.get().expect(TokenType.NUMERIC) as NumericToken).getNumber()
-        val typePart = include(IdentifierParser().optional()).getOrNull()?.getIdentifierName()
+        val typePart = include(RawIdentifierParser().optional()).getOrNull()
         val numberTag = NumberTag(number)
         return when (typePart?.lowercase()) {
             "b" -> ByteTag(numberTag.byteValue())

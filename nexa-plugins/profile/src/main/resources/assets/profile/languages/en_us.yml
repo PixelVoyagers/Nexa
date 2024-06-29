@@ -2,6 +2,9 @@ text.profile:
   e-profile: E-Profile
   experience: Experience
   experience.amount: "Experience: %s points"
+  mailbox: Mailbox
+  mail: Mail
+  attachments: Attachments
 
 command.profile:
   e-profile:

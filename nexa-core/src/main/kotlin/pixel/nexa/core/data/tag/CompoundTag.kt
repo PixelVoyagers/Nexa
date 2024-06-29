@@ -37,6 +37,7 @@ class CompoundTag : ITag<Map<String, Any?>> {
         when (it) {
             is StringTag -> it.read() == "true"
             is NumberTag -> it.booleanValue()
+            is BooleanTag -> it.read()
             else -> false
         }
     }

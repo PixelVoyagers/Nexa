@@ -76,9 +76,16 @@ class ItemStack(
         return tooltip
     }
 
-    fun getNameWithCount(): TextFragment {
+    fun getNameWithCount(showId: Boolean = false): TextFragment {
         return MessageFragments.multiple(
             getName(),
+            *if (showId) arrayOf(
+                MessageFragments.text(
+                    " (${
+                        getItem().getRegistry().get(getItem()).toString()
+                    })"
+                )
+            ) else emptyArray<TextFragment>(),
             MessageFragments.text(" * "),
             MessageFragments.text(getCount().toString())
         )

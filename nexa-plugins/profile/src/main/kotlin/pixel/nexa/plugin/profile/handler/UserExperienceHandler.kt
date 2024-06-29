@@ -3,6 +3,7 @@ package pixel.nexa.plugin.profile.handler
 import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.data.component.IDataComponentType
+import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.core.data.tag.ITag
 import pixel.nexa.core.data.tag.NumberTag
 import pixel.nexa.network.entity.user.User
@@ -10,7 +11,7 @@ import pixel.nexa.network.entity.user.UserDataSchema
 import pixel.nexa.network.entity.user.editDataComponents
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.plugin.profile.ProfilePlugin
-import pixel.nexa.plugin.profile.UserProfileEntries
+import pixel.nexa.plugin.profile.command.UserProfileEntries
 import kotlin.math.max
 import kotlin.random.Random
 import kotlin.random.nextLong
@@ -97,5 +98,37 @@ class ExperienceSignHandler(private val experienceHandler: UserExperienceHandler
     }
 
     override fun getRewards(user: User) = setOf(ExperienceReward(Random.nextLong(2L..25L)))
+
+}
+
+@Component
+class ExperienceMailAttachmentType(private val experienceHandler: UserExperienceHandler, mailHandler: MailHandler) :
+    Mail.AttachmentType<ExperienceMailAttachmentType.ExperienceMailAttachment> {
+
+    init {
+        mailHandler.attachmentTypes += identifierOf("experience", ProfilePlugin.PLUGIN_ID) to this
+    }
+
+    fun create(amount: Long) = ExperienceMailAttachment(amount)
+
+    inner class ExperienceMailAttachment(var amount: Long) : Mail.Attachment(this) {
+
+        override fun giveTo(user: User): Boolean {
+            experienceHandler.addUserExperience(user, amount)
+            return true
+        }
+
+        override fun getDisplay() = MessageFragments.translatable("text.profile.experience.amount", amount)
+
+
+    }
+
+    override fun deserialize(tag: CompoundTag): ExperienceMailAttachment {
+        return ExperienceMailAttachment(tag.getLong("experience")!!)
+    }
+
+    override fun serialize(element: ExperienceMailAttachment): CompoundTag {
+        return CompoundTag().putNumber("experience", element.amount)
+    }
 
 }

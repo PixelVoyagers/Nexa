@@ -1,4 +1,4 @@
-package pixel.nexa.plugin.profile
+package pixel.nexa.plugin.profile.command
 
 import pixel.auxframework.component.annotation.Component
 import pixel.nexa.network.command.Command
@@ -6,6 +6,7 @@ import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.command.translatableReply
 import pixel.nexa.network.message.MutableMessageData
+import pixel.nexa.plugin.profile.ProfilePlugin
 import pixel.nexa.plugin.profile.handler.SignHandler
 import pixel.nexa.plugin.profile.handler.UserExperienceHandler
 import java.time.LocalDateTime

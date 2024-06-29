@@ -1,10 +1,11 @@
-package pixel.nexa.plugin.profile
+package pixel.nexa.plugin.profile.command
 
 import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
+import pixel.nexa.plugin.profile.ProfilePlugin
 import java.time.LocalDate
 import kotlin.random.Random
 import kotlin.random.nextInt

@@ -20,5 +20,5 @@ text:
     item: Item
     fluid: Fluid
     inventory: Inventory
-    reward.item: "Item: %s"
+    title.item: "Item: %s"
 

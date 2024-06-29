@@ -9,6 +9,7 @@ import org.jsoup.parser.Parser
 import org.jsoup.safety.Safelist
 import pixel.nexa.core.resource.AbstractLanguage
 import pixel.nexa.core.resource.PageView
+import pixel.nexa.core.resource.PageViewContextBuilder
 import pixel.nexa.core.util.BrowserUtils
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -56,8 +57,12 @@ object MessageFragments {
             Jsoup.clean(it, "", Safelist.none(), outputSettings)
         }
 
-        override fun asNode(language: AbstractLanguage) =
-            Element("div").appendChildren(Parser.parseXmlFragment(literalString, ""))
+        override fun asNode(language: AbstractLanguage): Element {
+            val parsed = Parser.parseXmlFragment(literalString, "")
+            return if (parsed.size == 1 && parsed.firstOrNull() is Element) parsed.first() as Element
+            else Element("div").appendChildren(Parser.parseXmlFragment(literalString, ""))
+        }
+
     }
 
     /**
@@ -65,12 +70,13 @@ object MessageFragments {
      */
     fun text(message: String) = object : TextFragment {
         override fun asText(language: AbstractLanguage) = message
+        override fun asNode(language: AbstractLanguage) = TextNode(message)
     }
 
     /**
      * 页面浏览
      */
-    fun pageView(pageView: PageView, block: MutableMap<String, Any>.() -> Unit) = object : ImageFragment {
+    fun pageView(pageView: PageView, block: PageViewContextBuilder.() -> Unit) = object : ImageFragment {
         private val byteArray: ByteArray by lazy {
             BrowserUtils.screenshot(pageView.render(block))
         }
