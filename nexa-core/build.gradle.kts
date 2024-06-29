@@ -18,7 +18,7 @@ dependencies {
 
     api("io.ktor:ktor-server-websockets:3.0.0-beta-1")
     api("io.ktor:ktor-server-auth:3.0.0-beta-1")
-    api("io.ktor:ktor-server-auth-jwt:3.0.0-beta-1")
+    api("io.ktor:ktor-server-sessions:3.0.0-beta-1")
 }
 
 dependencies {
