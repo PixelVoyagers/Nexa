@@ -1,6 +1,7 @@
 package pixel.nexa.network.entity.user
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.component.factory.AfterComponentAutowired
 import pixel.auxframework.component.factory.getComponent
@@ -51,6 +52,9 @@ abstract class UserDataSchema : SimpleListRepository<Pair<Identifier, IDataCompo
 
 }
 
+@Component
+class NexaContextUsers : MutableSet<User> by mutableSetOf()
+
 abstract class User(private val bot: NexaBot<*>) {
 
     private var compoundTag: CompoundTag? = null
@@ -58,8 +62,14 @@ abstract class User(private val bot: NexaBot<*>) {
     private var dataStorage: IStorage<UserMeta>? = null
 
     private val nexaCore = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<NexaCore>()
+    private val nexaContextUsers = bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<NexaContextUsers>()
     private val dataComponentSchema =
         bot.getAdapter().getContext().getAuxContext().componentFactory().getComponent<UserDataSchema>()
+
+    init {
+        @Suppress("LeakingThis")
+        nexaContextUsers.add(this)
+    }
 
     open fun getDataComponents() = dataComponents!!
     open fun setDataComponents(map: DataComponentMap) = editData {
@@ -72,6 +82,7 @@ abstract class User(private val bot: NexaBot<*>) {
     }
 
     open fun getDataStorage(): IStorage<UserMeta> = dataStorage!!
+    open fun getDataStorageOrNull() = dataStorage
 
     open fun refresh() {
         if (dataStorage == null)
@@ -161,6 +172,9 @@ abstract class User(private val bot: NexaBot<*>) {
                 getBot().getAdapter().getPlatform()
             }:${getUserId()}"
         } != null
+
+    override fun hashCode() = getDataStorageOrNull().hashCode()
+    override fun equals(other: Any?) = other === this || (other != null && (other is User && other.hashCode() == this.hashCode()))
 
 }
 

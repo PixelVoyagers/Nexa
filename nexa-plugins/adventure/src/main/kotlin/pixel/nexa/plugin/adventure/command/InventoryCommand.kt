@@ -59,6 +59,7 @@ class InventoryCommand(
                     put("fluids", fluidChunks.getOrNull(pageIndex) ?: emptyList<List<List<List<FluidStack>>>>())
                     put("assetsMap", assetsMap)
                     put("maxInt", { a: Int, b: Int -> max(a, b) })
+                    put("identifierOf", { a: String -> identifierOf(a) })
                     put(
                         "toHexString",
                         { int: Int -> int.toHexString(HexFormat.UpperCase).let { it.substring(2, it.length) } })

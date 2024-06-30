@@ -80,7 +80,7 @@ class CompoundTag : ITag<Map<String, Any?>> {
 
     override fun toString(): String {
         var string = "{"
-        for (i in read().entries) {
+        for (i in getEntries()) {
             val fallBack = string
             try {
                 string += StringTag(i.key).toString()

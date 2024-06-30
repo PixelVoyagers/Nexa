@@ -19,6 +19,7 @@
 <!--/*@thymesVar id="fluids" type="java.util.List<java.util.List<pixel.nexa.plugin.adventure.entity.fluid.FluidStack>>"*/-->
 <!--/*@thymesVar id="maxInt" type="kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, java.lang.Integer>"*/-->
 <!--/*@thymesVar id="toHexString" type="kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.String>"*/-->
+<!--/*@thymesVar id="identifierOf" type="kotlin.jvm.functions.Function1<java.lang.String, pixel.auxframework.core.registry.Identifier>"*/-->
 <body class="font-sans leading-normal tracking-normal flex items-center justify-center h-screen"
       style="background: linear-gradient(45deg, #52a4ff, #00e3ff);">
 <script>
@@ -50,7 +51,9 @@
                      th:src="${assetsMap.getTextureAsUrl('item', item.getItem().getRegistry().get(item.getItem()), '.png')}"/>
                 <div class="px-2 py-2">
                     <div class="text-base font-bold text-gray-700 break-words">
-                        <span th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"
+                        <span th:if="${!item.getDataComponents().get(identifierOf.invoke('nexa-adventure:custom_name')).get().isNone()}" th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"
+                              th:utext="${item.getNameWithCount(false).asNode(language)}"></span>
+                        <span th:if="${item.getDataComponents().get(identifierOf.invoke('nexa-adventure:custom_name')).get().isNone()}" th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"
                               th:utext="${item.getNameWithCount(false).asText(language)}"></span>
                         <span class="text-gray-500"
                               th:text="'(' + ${item.getItem().getRegistry().get(item.getItem())} + ')'"/>
@@ -74,7 +77,9 @@
                 </div>
                 <div class="px-2 py-2">
                     <div class="text-base font-bold text-gray-700 break-words">
-                        <span th:classappend="${fluid.getDataComponents().isEmpty()} ? '' : 'italic'"
+                        <span th:if="${!fluid.getDataComponents().get(identifierOf.invoke('nexa-adventure:custom_name')).get().isNone()}" th:classappend="${fluid.getDataComponents().isEmpty()} ? '' : 'italic'"
+                              th:utext="${fluid.getNameWithCount().asNode(language)}"></span>
+                        <span th:if="${fluid.getDataComponents().get(identifierOf.invoke('nexa-adventure:custom_name')).get().isNone()}" th:classappend="${fluid.getDataComponents().isEmpty()} ? '' : 'italic'"
                               th:utext="${fluid.getNameWithCount().asText(language)}"></span>
                         <span class="text-gray-500"
                               th:text="'(' + ${fluid.getFluid().getRegistry().get(fluid.getFluid())} + ')'"/>

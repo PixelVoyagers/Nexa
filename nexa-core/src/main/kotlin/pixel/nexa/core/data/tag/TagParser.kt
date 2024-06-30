@@ -9,7 +9,7 @@ import pixel.aurora.compiler.tokenizer.TokenType
 
 class TagParser : Parser<ITag<*>>() {
 
-    override fun parse() = include(CompoundTagParser() or ListTagParser() or BooleanTagParser() or StringTagParser())
+    override fun parse() = include(CompoundTagParser() or ListTagParser() or BooleanTagParser() or StringTagParser() or NumberTagParser())
 
 }
 

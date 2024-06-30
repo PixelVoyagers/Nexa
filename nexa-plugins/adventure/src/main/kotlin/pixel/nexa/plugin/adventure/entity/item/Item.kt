@@ -73,7 +73,8 @@ open class Item(private val properties: Properties = Properties()) : RegistryAwa
 
     private val dataComponentSchema = mutableMapOf<Identifier, IDataComponentType<*, *>>(
         ItemDataComponentTypes.CUSTOM_DATA,
-        ItemDataComponentTypes.CUSTOM_NAME
+        ItemDataComponentTypes.CUSTOM_NAME,
+        ItemDataComponentTypes.CUSTOM_TOOLTIP
     )
 
     open fun getDataComponentSchema() = dataComponentSchema

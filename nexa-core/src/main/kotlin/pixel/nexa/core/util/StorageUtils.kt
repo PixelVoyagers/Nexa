@@ -122,4 +122,7 @@ class FileStorage<T : Any>(
         if (file.readBytes().isEmpty()) super.reset()
     }
 
+    override fun hashCode() = file.absolutePath.hashCode()
+    override fun equals(other: Any?) = other === this || (other != null && (other is FileStorage<*> && other.hashCode() == hashCode()))
+
 }

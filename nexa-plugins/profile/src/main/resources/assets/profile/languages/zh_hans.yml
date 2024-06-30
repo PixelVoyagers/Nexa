@@ -34,3 +34,18 @@ command.profile:
       remove.name: 移除
       receive.name: 标为已读
       page.name: 页
+  permission:
+    name: 权限
+    option:
+      user.name: 用户
+      permission.name: 权限名称
+      add.name: 添加
+      remove.name: 移除
+  mail-send:
+    name: 发送邮件
+    option:
+      user.name: 用户
+      user-selector.name: 用户选择器
+      title.name: 标题
+      content.name: 正文
+      attachments.name: 附件

@@ -26,6 +26,7 @@ import pixel.nexa.core.util.ConstantUtils
 import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.CommandService
 import pixel.nexa.network.command.NexaCommand
+import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.GenericMessageEventHandler
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.putDiscordTranslations
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.toNexa
@@ -135,6 +136,8 @@ class DiscordBotInternal(private val bot: DiscordBot) : AbstractNexaBot.Internal
             continuation.resume(bot.cachePool.getOrPut(it.id) { DiscordUser(bot, it) })
         }
     }
+
+    override suspend fun getCacheUsers() = bot.cachePool.getAll<User>().values.toSet()
 
 }
 

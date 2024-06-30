@@ -9,6 +9,7 @@ import pixel.nexa.core.platform.adapter.NexaAdapter
 
 interface NexaContext {
 
+    fun getNexaContext() = this
     fun isStarted(): Boolean
 
     fun getListeners(): Set<NexaEventListener> = {

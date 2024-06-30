@@ -5,11 +5,11 @@ import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.MessageFragments
+import pixel.nexa.plugin.adventure.AdventurePlugin
 import pixel.nexa.plugin.adventure.entity.AdventureRegistries
 import pixel.nexa.plugin.adventure.entity.item.ItemStack
 import pixel.nexa.plugin.adventure.entity.item.ItemStackDataType
 import pixel.nexa.plugin.adventure.handler.UserInventoryHandler
-import pixel.nexa.plugin.profile.ProfilePlugin
 import pixel.nexa.plugin.profile.handler.Mail
 import pixel.nexa.plugin.profile.handler.MailHandler
 
@@ -41,7 +41,7 @@ class ItemMailAttachmentType(
     fun create(itemStack: ItemStack) = ItemMailAttachment(this, userInventoryHandler, itemStack)
 
     init {
-        mailHandler.attachmentTypes += identifierOf("${ProfilePlugin.PLUGIN_ID}:item") to this
+        mailHandler.attachmentTypes += identifierOf("${AdventurePlugin.PLUGIN_ID}:item") to this
     }
 
     private val itemStackDataType = ItemStackDataType(registries)

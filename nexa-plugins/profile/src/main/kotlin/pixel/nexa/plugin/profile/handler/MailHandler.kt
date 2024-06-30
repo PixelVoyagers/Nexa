@@ -41,22 +41,34 @@ class Mail(
 
 class MailDataType(private val handler: MailHandler) : IDataComponentType<Mail, CompoundTag> {
 
+    fun deserializeAttachment(tag: CompoundTag): Mail.Attachment {
+        val attachmentType = identifierOf(tag.getString("type")!!, NexaCore.DEFAULT_NAMESPACE)
+        val data = tag.getCompound("data")!!
+        return handler.attachmentTypes[attachmentType]!!.deserialize(data)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun serializeAttachment(attachment: Mail.Attachment): CompoundTag {
+        val attachmentTag = CompoundTag()
+        attachmentTag.putString("type", handler.attachmentTypes.inverse()[attachment.getType()].toString())
+        attachmentTag.putCompound(
+            "data",
+            (attachment.getType() as Mail.AttachmentType<Mail.Attachment>).serialize(attachment)
+        )
+        return attachmentTag
+    }
+
     override fun deserialize(tag: CompoundTag): Mail {
         val title = MessageFragments.literal(tag.getString("title")!!)
         val content = MessageFragments.literal(tag.getString("content")!!)
         val id = tag.getLong("id")!!
         val received = tag.getBoolean("received") ?: false
-        val attachments = tag.getList("attachments")!!.filterIsInstance<CompoundTag>().map {
-            val attachmentType = identifierOf(it.getString("type")!!, NexaCore.DEFAULT_NAMESPACE)
-            val data = it.getCompound("data")!!
-            handler.attachmentTypes[attachmentType]!!.deserialize(data)
-        }
+        val attachments = tag.getList("attachments")!!.filterIsInstance<CompoundTag>().map(::deserializeAttachment)
         return Mail(title, content, attachments.toMutableList(), isReceived = received).apply {
             this.id = id
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun serialize(element: Mail): CompoundTag {
         val tag = CompoundTag()
         tag.putString("title", element.title.asNode(RootLanguage).toString())
@@ -67,13 +79,7 @@ class MailDataType(private val handler: MailHandler) : IDataComponentType<Mail, 
             "attachments",
             ListTag().apply {
                 for (attachment in element.attachments) {
-                    val attachmentTag = CompoundTag()
-                    attachmentTag.putString("type", handler.attachmentTypes.inverse()[attachment.getType()].toString())
-                    attachmentTag.putCompound(
-                        "data",
-                        (attachment.getType() as Mail.AttachmentType<Mail.Attachment>).serialize(attachment)
-                    )
-                    add(attachmentTag)
+                    add(serializeAttachment(attachment))
                 }
             }
         )
@@ -87,7 +93,8 @@ class MailHandler(userDataSchema: UserDataSchema) {
 
     val attachmentTypes: HashBiMap<Identifier, Mail.AttachmentType<out Mail.Attachment>> =
         HashBiMap.create<Identifier, Mail.AttachmentType<out Mail.Attachment>>()
-    val userMailboxField = identifierOf("${ProfilePlugin.PLUGIN_ID}:mailbox") to ListDataType(MailDataType(this))
+    val mailDataType = MailDataType(this)
+    val userMailboxField = identifierOf("${ProfilePlugin.PLUGIN_ID}:mailbox") to ListDataType(mailDataType)
 
     init {
         userDataSchema.add(userMailboxField)

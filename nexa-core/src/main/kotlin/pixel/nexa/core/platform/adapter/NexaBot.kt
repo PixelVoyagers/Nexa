@@ -6,6 +6,7 @@ interface NexaBot<S : NexaBot<S>> {
 
     interface Internal {
 
+        suspend fun getCacheUsers(): Set<User>
         suspend fun getUserById(id: String): User
 
     }

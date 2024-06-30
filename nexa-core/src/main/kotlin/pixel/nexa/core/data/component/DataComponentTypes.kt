@@ -29,7 +29,7 @@ class ListDataType<T, E : ITag<*>>(private val type: IDataComponentType<T, E>) :
 class TextFragmentDataType : IDataComponentType<TextFragment, StringTag> {
 
     override fun deserialize(tag: StringTag) = MessageFragments.literal(tag.read())
-    override fun serialize(element: TextFragment) = StringTag(element.asText(RootLanguage))
+    override fun serialize(element: TextFragment) = StringTag(element.asNode(RootLanguage).toString())
 
 }
 
