@@ -4,7 +4,7 @@ import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.data.tag.*
-import pixel.nexa.core.resource.RootLanguage
+import pixel.nexa.core.resource.asset.RootLanguage
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.TextFragment
 import java.math.BigDecimal

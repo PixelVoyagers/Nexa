@@ -11,7 +11,7 @@ import pixel.auxframework.web.annotation.RequestMapping
 import pixel.auxframework.web.annotation.RestController
 import pixel.auxframework.web.server.ServerConfig
 import pixel.nexa.core.NexaCore
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AssetsMap
 import java.net.URI
 
 @RestController(Path("/nexa/core/resource"))

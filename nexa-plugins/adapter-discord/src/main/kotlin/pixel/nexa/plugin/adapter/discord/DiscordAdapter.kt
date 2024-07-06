@@ -1,5 +1,6 @@
 package pixel.nexa.plugin.adapter.discord
 
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.component.annotation.Service
 import pixel.auxframework.util.FunctionUtils.memorize
 import pixel.nexa.core.annotation.Adapter
@@ -7,6 +8,7 @@ import pixel.nexa.core.platform.adapter.AbstractNexaAdapter
 
 @Adapter
 @Service
+@Component
 class DiscordAdapter : AbstractNexaAdapter<DiscordBot, DiscordAdapter.Config>() {
 
     companion object {

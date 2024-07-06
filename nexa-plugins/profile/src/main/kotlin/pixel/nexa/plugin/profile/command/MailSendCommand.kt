@@ -4,6 +4,7 @@ import pixel.aurora.compiler.AuroraCompiler
 import pixel.aurora.compiler.parser.Parser
 import pixel.aurora.compiler.tokenizer.TokenBuffer
 import pixel.aurora.compiler.tokenizer.Tokenizer
+import pixel.auxframework.component.annotation.Component
 import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.core.data.tag.ListTagParser
 import pixel.nexa.core.platform.NexaContext
@@ -21,6 +22,7 @@ import pixel.nexa.plugin.profile.handler.MailHandler
 import java.nio.CharBuffer
 
 @Command("${ProfilePlugin.PLUGIN_ID}:mail-send", needPermission = true)
+@Component
 class MailSendCommand(private val nexaContext: NexaContext, private val mailHandler: MailHandler) : NexaCommand() {
 
     @Action

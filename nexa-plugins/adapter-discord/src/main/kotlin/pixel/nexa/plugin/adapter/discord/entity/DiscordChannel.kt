@@ -2,7 +2,7 @@ package pixel.nexa.plugin.adapter.discord.entity
 
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
-import pixel.nexa.core.resource.RootLanguage
+import pixel.nexa.core.resource.asset.RootLanguage
 import pixel.nexa.network.entity.guild.Channel
 import pixel.nexa.plugin.adapter.discord.DiscordBot
 import pixel.nexa.plugin.adapter.discord.command.DiscordOriginalMessage

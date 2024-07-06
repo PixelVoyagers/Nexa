@@ -9,16 +9,13 @@ import pixel.auxframework.context.builtin.SimpleListRepository
 import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.NexaCore
-import pixel.nexa.core.data.component.DataComponentMap
-import pixel.nexa.core.data.component.IDataComponentType
-import pixel.nexa.core.data.component.ListDataType
-import pixel.nexa.core.data.component.StringDataType
+import pixel.nexa.core.data.component.*
 import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.core.data.tag.compoundTagOf
 import pixel.nexa.core.platform.adapter.NexaAdapter
 import pixel.nexa.core.platform.adapter.NexaBot
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.Languages
+import pixel.nexa.core.resource.asset.AbstractLanguage
+import pixel.nexa.core.resource.asset.Languages
 import pixel.nexa.core.util.DataTypes
 import pixel.nexa.core.util.FileStorage
 import pixel.nexa.core.util.IStorage
@@ -42,7 +39,7 @@ abstract class UserDataSchema : SimpleListRepository<Pair<Identifier, IDataCompo
     companion object {
 
         val FIELD_PERMISSIONS =
-            identifierOf("permissions", NexaCore.DEFAULT_NAMESPACE) to ListDataType(StringDataType())
+            identifierOf("permissions", NexaCore.DEFAULT_NAMESPACE) to ListDataType(IdentifierDataType())
 
     }
 

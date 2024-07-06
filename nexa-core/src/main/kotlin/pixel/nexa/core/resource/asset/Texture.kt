@@ -1,7 +1,30 @@
-package pixel.nexa.core.resource
+package pixel.nexa.core.resource.asset
 
+import pixel.auxframework.component.annotation.Autowired
+import pixel.auxframework.component.annotation.Component
+import pixel.auxframework.core.registry.Identifier
+import pixel.nexa.core.resource.NexaResource
+import pixel.nexa.core.resource.NexaResourceLike
+import pixel.nexa.core.web.NexaResourceWeb
 import java.awt.Color
 import java.awt.image.BufferedImage
+
+@Component
+class TextureEngine(internal val nexaResourceWeb: NexaResourceWeb) {
+
+    @Autowired internal lateinit var assetsMap: AssetsMap
+
+    fun getTexture(identifier: Identifier) = Texture(this, assetsMap[identifier])
+
+}
+
+class Texture(private val engine: TextureEngine, private val resource: NexaResource) : NexaResourceLike {
+
+    override fun asResource() = resource
+
+    fun asUrl() = engine.nexaResourceWeb.getResourceUrl(engine.assetsMap[resource])
+
+}
 
 object TextureUtils {
 

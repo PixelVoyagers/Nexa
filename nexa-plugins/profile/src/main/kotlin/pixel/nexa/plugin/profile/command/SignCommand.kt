@@ -15,8 +15,8 @@ import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 import kotlin.time.toKotlinDuration
 
-@Component
 @Command("${ProfilePlugin.PLUGIN_ID}:sign")
+@Component
 class SignCommand(private val userExperienceHandler: UserExperienceHandler, private val signHandler: SignHandler) :
     NexaCommand() {
 

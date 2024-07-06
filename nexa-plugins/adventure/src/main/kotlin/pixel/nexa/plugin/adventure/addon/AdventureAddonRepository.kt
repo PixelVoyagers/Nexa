@@ -1,6 +1,7 @@
 package pixel.nexa.plugin.adventure.addon
 
 import pixel.auxframework.component.annotation.Autowired
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.component.factory.AfterComponentAutowired
 import pixel.auxframework.component.factory.ComponentFactory
@@ -8,6 +9,7 @@ import pixel.auxframework.component.factory.getComponents
 import pixel.auxframework.context.builtin.SimpleListRepository
 
 @Repository
+@Component
 abstract class AdventureAddonRepository : SimpleListRepository<AdventureAddon>, AfterComponentAutowired {
 
     @Autowired

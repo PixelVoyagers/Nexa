@@ -20,7 +20,7 @@ import pixel.nexa.core.NexaVersion
 import pixel.nexa.core.component.AfterResourceLoaded
 import pixel.nexa.core.component.NexaContextAware
 import pixel.nexa.core.platform.NexaContext
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AssetsMap
 import pixel.nexa.core.resource.ResourceLoader
 import java.io.PrintStream
 

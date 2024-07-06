@@ -1,12 +1,14 @@
 package pixel.nexa.plugin.profile.command
 
-import pixel.nexa.core.resource.Languages
+import pixel.auxframework.component.annotation.Component
+import pixel.nexa.core.resource.asset.Languages
 import pixel.nexa.network.command.*
 import pixel.nexa.network.message.MutableMessageData
 import pixel.nexa.plugin.profile.ProfilePlugin
 import java.text.DecimalFormat
 
 @Command("${ProfilePlugin.PLUGIN_ID}:locale")
+@Component
 class LocaleCommand(private val languages: Languages) : NexaCommand() {
 
     @Action

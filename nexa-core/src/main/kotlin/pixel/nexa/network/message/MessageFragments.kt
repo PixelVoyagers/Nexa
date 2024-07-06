@@ -7,9 +7,9 @@ import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
 import org.jsoup.parser.Parser
 import org.jsoup.safety.Safelist
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.PageView
-import pixel.nexa.core.resource.PageViewContextBuilder
+import pixel.nexa.core.resource.asset.AbstractLanguage
+import pixel.nexa.core.resource.asset.PageView
+import pixel.nexa.core.resource.asset.PageViewContextBuilder
 import pixel.nexa.core.util.BrowserUtils
 import java.io.ByteArrayInputStream
 import java.io.File

@@ -1,5 +1,6 @@
 package pixel.nexa.plugin.profile.command
 
+import pixel.auxframework.component.annotation.Component
 import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
@@ -11,6 +12,7 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 @Command("${ProfilePlugin.PLUGIN_ID}:luck")
+@Component
 class LuckCommand : NexaCommand() {
 
     fun random(botId: String, userId: String) = LocalDate.now().let { date ->

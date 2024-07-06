@@ -1,16 +1,18 @@
 package pixel.nexa.plugin.profile.command
 
-import arrow.core.Some
+import pixel.auxframework.component.annotation.Component
+import pixel.auxframework.core.registry.identifierOf
+import pixel.nexa.core.NexaCore
+import pixel.nexa.core.service.PermissionHandler
 import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
 import pixel.nexa.network.command.OptionTypes
-import pixel.nexa.network.entity.user.UserDataSchema
-import pixel.nexa.network.entity.user.editDataComponents
 import pixel.nexa.plugin.profile.ProfilePlugin
 
 @Command("${ProfilePlugin.PLUGIN_ID}:permission", needPermission = true)
-class PermissionCommand : NexaCommand() {
+@Component
+class PermissionCommand(private val permissionHandler: PermissionHandler) : NexaCommand() {
 
     @Action
     suspend fun handle(
@@ -29,13 +31,8 @@ class PermissionCommand : NexaCommand() {
                     it.internal().getUserById(split.subList(1, split.size).joinToString(separator = ":"))
                 }.getOrNull()
             }
-        user.editDataComponents {
-            val field = get(UserDataSchema.FIELD_PERMISSIONS.second) ?: return@editDataComponents
-            val list = field.get().getOrNull()?.toMutableList() ?: mutableListOf()
-            if (add) list.add(permission)
-            else if (remove) list.remove(permission)
-            field.set(Some(list))
-        }
+        if (add) permissionHandler.addPermissions(user, identifierOf(permission, NexaCore.DEFAULT_NAMESPACE))
+        if (remove) permissionHandler.removePermissions(user, identifierOf(permission, NexaCore.DEFAULT_NAMESPACE))
         session.reply("√")
     }
 

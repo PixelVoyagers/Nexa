@@ -2,14 +2,16 @@ package pixel.nexa.network.command
 
 import kotlinx.coroutines.runBlocking
 import pixel.auxframework.component.annotation.Component
+import pixel.auxframework.core.registry.identifierOf
 import pixel.auxframework.util.Reference
+import pixel.nexa.core.NexaCore
 import pixel.nexa.core.component.NexaEventListener
-import pixel.nexa.network.entity.user.UserDataSchema
+import pixel.nexa.core.service.PermissionHandler
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
 
 @Component
-class CommandPermissionHandler : NexaEventListener, BeforeCommandInteractEventHandler {
+class CommandPermissionHandler(private val permissionHandler: PermissionHandler) : NexaEventListener, BeforeCommandInteractEventHandler {
 
     override fun handleBeforeCommandInteractionEvent(
         session: CommandSession,
@@ -21,8 +23,7 @@ class CommandPermissionHandler : NexaEventListener, BeforeCommandInteractEventHa
                 command.getCommandData().getIdentifier().getPath()
             }"
             runCommand.set(
-                session.getUser().getDataComponents().getTyped(UserDataSchema.FIELD_PERMISSIONS.second)?.getOrNull()
-                    ?.contains(permission) ?: false
+                permissionHandler.hasPermission(session.getUser(), identifierOf(permission, NexaCore.DEFAULT_NAMESPACE)) || permissionHandler.isAdmin(session.getUser())
             )
             if (!runCommand.get()) runBlocking {
                 session.reply(

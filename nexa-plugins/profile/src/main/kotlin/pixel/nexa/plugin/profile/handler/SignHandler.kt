@@ -29,6 +29,7 @@ class UserLastSignField : IDataComponentType<Long, ITag<Number>> {
 }
 
 @Repository
+@Component
 abstract class SignRewardSupplierRepository : SimpleListRepository<SignHandler.RewardSupplier>, AfterContextRefreshed {
 
     @Autowired

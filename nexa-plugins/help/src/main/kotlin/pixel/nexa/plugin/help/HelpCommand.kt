@@ -1,12 +1,14 @@
 package pixel.nexa.plugin.help
 
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.identifierOf
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AbstractLanguage
+import pixel.nexa.core.resource.asset.AssetsMap
 import pixel.nexa.network.command.*
 import pixel.nexa.network.message.MessageFragments
 import pixel.nexa.network.message.MutableMessageData
 
+@Component
 @Command("help:help")
 class HelpCommand(private val commandService: CommandService, private val assetsMap: AssetsMap) : NexaCommand() {
 

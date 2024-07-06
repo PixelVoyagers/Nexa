@@ -1,7 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "2.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("maven-publish")
 }
 
@@ -31,7 +33,7 @@ allprojects {
 }
 
 group = "pixel.nexa"
-version = "1.0.0"
+version = "1.0.1"
 
 subprojects {
     group = rootProject.group
@@ -73,4 +75,8 @@ allprojects {
             expand(replaceProperties)
         }
     }
+}
+
+tasks.withType<ShadowJar> {
+    enabled = false
 }

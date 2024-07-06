@@ -3,13 +3,14 @@ package pixel.nexa.plugin.profile.command
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import pixel.auxframework.component.annotation.Autowired
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.component.annotation.Repository
 import pixel.auxframework.component.factory.ComponentFactory
 import pixel.auxframework.component.factory.getComponents
 import pixel.auxframework.context.builtin.AfterContextRefreshed
 import pixel.auxframework.context.builtin.SimpleListRepository
 import pixel.auxframework.core.registry.identifierOf
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AssetsMap
 import pixel.nexa.network.command.Command
 import pixel.nexa.network.command.CommandSession
 import pixel.nexa.network.command.NexaCommand
@@ -26,6 +27,7 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Repository
+@Component
 abstract class UserProfileEntries : SimpleListRepository<UserProfileEntries.UserProfileEntry>, AfterContextRefreshed {
 
     @Autowired
@@ -48,6 +50,7 @@ abstract class UserProfileEntries : SimpleListRepository<UserProfileEntries.User
 }
 
 @Command("${ProfilePlugin.PLUGIN_ID}:e-profile")
+@Component
 class EProfileCommand(private val assetsMap: AssetsMap, private val userProfileEntries: UserProfileEntries) :
     NexaCommand() {
 

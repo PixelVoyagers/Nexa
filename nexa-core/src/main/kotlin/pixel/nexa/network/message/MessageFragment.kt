@@ -2,7 +2,7 @@ package pixel.nexa.network.message
 
 import org.jsoup.nodes.Node
 import org.jsoup.nodes.TextNode
-import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.asset.AbstractLanguage
 import java.io.InputStream
 
 /**

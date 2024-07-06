@@ -10,8 +10,8 @@ import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.NexaContext
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.Languages
+import pixel.nexa.core.resource.asset.AbstractLanguage
+import pixel.nexa.core.resource.asset.Languages
 import pixel.nexa.network.command.CommandTranslator
 import pixel.nexa.network.command.OptionTypes
 

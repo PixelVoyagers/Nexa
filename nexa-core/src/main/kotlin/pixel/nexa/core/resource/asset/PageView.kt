@@ -1,4 +1,4 @@
-package pixel.nexa.core.resource
+package pixel.nexa.core.resource.asset
 
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
@@ -10,10 +10,12 @@ import pixel.auxframework.component.factory.getComponents
 import pixel.auxframework.context.builtin.AfterContextRefreshed
 import pixel.auxframework.core.registry.Identifier
 import pixel.auxframework.util.FunctionUtils.memorize
+import pixel.nexa.core.resource.NexaResource
+import pixel.nexa.core.resource.NexaResourceLike
 import java.util.*
 
 @Service
-class PageViewEngine(private val resourceLoader: ResourceLoader, private val componentFactory: ComponentFactory) :
+class PageViewEngine(private val componentFactory: ComponentFactory) :
     AfterContextRefreshed {
 
     val engine = TemplateEngine()
@@ -28,8 +30,7 @@ class PageViewEngine(private val resourceLoader: ResourceLoader, private val com
     fun getPage(identifier: Identifier) = memorize(identifier) {
         PageView(
             this,
-            assetsMap[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")],
-            resourceLoader
+            assetsMap[Identifier(identifier.getNamespace(), "pages/${identifier.getPath()}")]
         )
     }
 
@@ -37,9 +38,10 @@ class PageViewEngine(private val resourceLoader: ResourceLoader, private val com
 
 open class PageView(
     private val pageViewEngine: PageViewEngine,
-    val nexaResource: NexaResource,
-    val resourceLoader: ResourceLoader
-) {
+    val nexaResource: NexaResource
+) : NexaResourceLike {
+
+    override fun asResource() = nexaResource
 
     fun render(block: PageViewContextBuilder.() -> Unit): String {
         val builder = PageViewContextBuilder()

@@ -1,5 +1,6 @@
 package pixel.nexa.plugin.adventure.command
 
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.data.component.DataCompoundMapParser
 import pixel.nexa.network.command.*
@@ -10,6 +11,7 @@ import pixel.nexa.plugin.adventure.entity.AdventureRegistries
 import pixel.nexa.plugin.adventure.entity.item.ItemStack
 import pixel.nexa.plugin.adventure.handler.UserInventoryHandler
 
+@Component
 @Command("${AdventurePlugin.PLUGIN_ID}:give-item", needPermission = true)
 class GiveItemCommand(
     private val adventureRegistries: AdventureRegistries,

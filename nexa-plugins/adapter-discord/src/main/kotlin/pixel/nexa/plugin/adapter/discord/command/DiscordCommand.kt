@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.utils.FileUpload
 import net.dv8tion.jda.api.utils.messages.MessageCreateData
 import net.dv8tion.jda.api.utils.messages.MessageEditData
 import pixel.auxframework.component.factory.getComponent
-import pixel.nexa.core.resource.AbstractLanguage
-import pixel.nexa.core.resource.Languages
+import pixel.nexa.core.resource.asset.AbstractLanguage
+import pixel.nexa.core.resource.asset.Languages
 import pixel.nexa.network.message.*
 import pixel.nexa.plugin.adapter.discord.DiscordUtils.toNexa
 import pixel.nexa.plugin.adapter.discord.entity.DiscordUser

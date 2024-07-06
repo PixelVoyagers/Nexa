@@ -12,7 +12,7 @@ import pixel.auxframework.util.MutableReference
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.NexaContext
 import pixel.nexa.core.platform.getListenersOfType
-import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.asset.AbstractLanguage
 import pixel.nexa.core.util.StringUtils
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.session.ISession

@@ -1,17 +1,14 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
     id("maven-publish")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow")
     application
 }
 
 dependencies {
     api(project(":nexa-core"))
-
-    api(project(":nexa-plugins:nexa-plugin-adapter-discord"))
-    api(project(":nexa-plugins:nexa-plugin-profile"))
-    api(project(":nexa-plugins:nexa-plugin-help"))
-    api(project(":nexa-plugins:nexa-plugin-adventure"))
 }
 
 dependencies {
@@ -31,4 +28,8 @@ publishing {
 
 application {
     mainClass.set("pixel.nexa.application.NexaEngineBootstrap")
+}
+
+tasks.withType<ShadowJar> {
+    enabled = true
 }

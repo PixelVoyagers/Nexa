@@ -1,7 +1,8 @@
 package pixel.nexa.plugin.profile.command
 
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.identifierOf
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AssetsMap
 import pixel.nexa.network.command.*
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.MessageFragments
@@ -13,6 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @Command("${ProfilePlugin.PLUGIN_ID}:mailbox")
+@Component
 class MailboxCommand(private val assetsMap: AssetsMap, private val mailHandler: MailHandler) : NexaCommand() {
 
     fun getChunks(user: User) = mailHandler.getUserMailbox(user)

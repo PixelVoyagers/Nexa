@@ -21,7 +21,7 @@ import pixel.auxframework.core.registry.identifierOf
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.platform.adapter.AbstractNexaBot
 import pixel.nexa.core.platform.getListenersOfType
-import pixel.nexa.core.resource.Languages
+import pixel.nexa.core.resource.asset.Languages
 import pixel.nexa.core.util.ConstantUtils
 import pixel.nexa.network.command.CommandAutoComplete
 import pixel.nexa.network.command.CommandService

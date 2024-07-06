@@ -1,10 +1,13 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
     id("maven-publish")
+    id("com.github.johnrengelman.shadow")
 }
 
 dependencies {
-    api(project(":nexa-core"))
+    compileOnly(project(":nexa-core"))
 
     implementation("com.google.zxing:core:3.5.3")
 }
@@ -23,3 +26,10 @@ publishing {
         artifact(tasks.kotlinSourcesJar)
     }
 }
+
+tasks.withType<ShadowJar> {
+    enabled = true
+    exclude("kotlin/**", "org/intellij/**", "org/jetbrains/**")
+    exclude("META-INF/kotlin-stdlib**.kotlin_module")
+}
+

@@ -1,4 +1,4 @@
-package pixel.nexa.core.resource
+package pixel.nexa.core.resource.asset
 
 import com.google.common.collect.HashBiMap
 import pixel.auxframework.component.annotation.Autowired
@@ -9,6 +9,7 @@ import pixel.auxframework.util.useAuxConfig
 import pixel.nexa.core.NexaCore
 import pixel.nexa.core.component.AfterResourceLoaded
 import pixel.nexa.core.platform.NexaContext
+import pixel.nexa.core.resource.ResourceMap
 import pixel.nexa.core.util.ResourceUtils
 import java.util.*
 

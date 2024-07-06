@@ -9,7 +9,7 @@ import pixel.nexa.core.data.component.IDataComponentType
 import pixel.nexa.core.data.component.ListDataType
 import pixel.nexa.core.data.tag.CompoundTag
 import pixel.nexa.core.data.tag.ListTag
-import pixel.nexa.core.resource.RootLanguage
+import pixel.nexa.core.resource.asset.RootLanguage
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.entity.user.UserDataSchema
 import pixel.nexa.network.entity.user.editDataComponents

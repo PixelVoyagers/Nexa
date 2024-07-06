@@ -1,7 +1,7 @@
 package pixel.nexa.plugin.adapter.discord.message
 
 import net.dv8tion.jda.api.events.message.GenericMessageEvent
-import pixel.nexa.core.resource.AbstractLanguage
+import pixel.nexa.core.resource.asset.AbstractLanguage
 import pixel.nexa.network.message.MessageData
 import pixel.nexa.network.message.MessageSession
 import pixel.nexa.plugin.adapter.discord.DiscordBot

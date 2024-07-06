@@ -1,7 +1,8 @@
 package pixel.nexa.plugin.adventure.command
 
+import pixel.auxframework.component.annotation.Component
 import pixel.auxframework.core.registry.identifierOf
-import pixel.nexa.core.resource.AssetsMap
+import pixel.nexa.core.resource.asset.AssetsMap
 import pixel.nexa.network.command.*
 import pixel.nexa.network.entity.user.User
 import pixel.nexa.network.message.MessageFragments
@@ -16,6 +17,7 @@ import pixel.nexa.plugin.adventure.handler.UserInventoryHandler
 import kotlin.math.max
 import kotlin.math.min
 
+@Component
 @Command("${AdventurePlugin.PLUGIN_ID}:inventory")
 class InventoryCommand(
     private val assetsMap: AssetsMap,

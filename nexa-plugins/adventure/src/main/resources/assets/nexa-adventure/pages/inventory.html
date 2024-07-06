@@ -9,8 +9,8 @@
     <link href="https://fonts.font.im/css2?family=Liu+Jian+Mao+Cao" rel="stylesheet">
 </head>
 
-<!--/*@thymesVar id="language" type="pixel.nexa.core.resource.AbstractLanguage"*/-->
-<!--/*@thymesVar id="assetsMap" type="pixel.nexa.core.resource.AssetsMap"*/-->
+<!--/*@thymesVar id="language" type="pixel.nexa.core.resource.asset.AbstractLanguage"*/-->
+<!--/*@thymesVar id="assetsMap" type="pixel.nexa.core.resource.asset.AssetsMap"*/-->
 <!--/*@thymesVar id="page" type="java.lang.String"*/-->
 <!--/*@thymesVar id="MessageFragments" type="pixel.nexa.network.message.MessageFragments"*/-->
 <!--/*@thymesVar id="ItemProperties" type="pixel.nexa.plugin.adventure.entity.item.Item.Properties.Companion"*/-->
@@ -48,7 +48,7 @@
                 <img alt="Item Icon" class="px-2 py-2"
                      onerror="src = 'https://via.placeholder.com/60';"
                      style="height: 3rem; width: 3rem; image-rendering: pixelated;"
-                     th:src="${assetsMap.getTextureAsUrl('item', item.getItem().getRegistry().get(item.getItem()), '.png')}"/>
+                     th:src="${assetsMap.getTexture('item', item.getItem().getRegistry().get(item.getItem()), '.png').asUrl()}"/>
                 <div class="px-2 py-2">
                     <div class="text-base font-bold text-gray-700 break-words">
                         <span th:if="${!item.getDataComponents().get(identifierOf.invoke('nexa-adventure:custom_name')).get().isNone()}" th:classappend="${item.getDataComponents().isEmpty()} ? '' : 'italic'"
